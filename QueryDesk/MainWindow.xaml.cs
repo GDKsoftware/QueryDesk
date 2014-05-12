@@ -30,10 +30,13 @@ namespace QueryDesk
             InitializeComponent();
 
             LoadConnectionSettings();
+
+            RefreshConnectionList();
         }
 
         public void LoadConnectionSettings()
         {
+            // connect to database through connection string set in the App.config
             try
             {
                 string connstr = (string)ConfigurationManager.AppSettings["connection"];
@@ -49,7 +52,16 @@ namespace QueryDesk
 
         private void lstConnections_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            //
+            if (lstConnections.SelectedIndex >= 0)
+            {
+                // determine selected connection
+                int id = (int)lstConnections.SelectedValue;
+                var row = (DataRowView)(lstConnections.SelectedItem);
+                string title = (string)row.Row["name"];
+
+                // connect to the right server
+                ConnectToServer(id, title);
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -57,12 +69,41 @@ namespace QueryDesk
 
         }
 
-        private void ConnectToServer(string servername)
+        /// <summary>
+        /// Refresh or initialize the list of connections we configures
+        /// </summary>
+        private void RefreshConnectionList()
         {
-            var tab = new TabItem();
-            tab.Header = servername;
+            //  todo: make interface to provide data, doesn't have to come from a database.
 
-            var tabcontent = new UserControl1();
+            MySqlDataAdapter adapter = new MySqlDataAdapter();
+            var cmd = new MySqlCommand("select id, name from connection order by name asc", DB);
+
+            adapter.SelectCommand = cmd;
+
+            DataSet ds = new DataSet();
+            adapter.Fill(ds, "connection");
+
+            var dt = ds.Tables["connection"];
+
+            // set list items to query results
+            lstConnections.ItemsSource = dt.DefaultView;
+            lstConnections.DisplayMemberPath = "name";
+            lstConnections.SelectedValuePath = "id";
+        }
+
+        /// <summary>
+        /// Open a new tab for the selected server.
+        /// </summary>
+        /// <param name="connection_id">id</param>
+        /// <param name="title">connection name to put in the tab header, should probably be accompanied by the id?</param>
+        private void ConnectToServer(int connection_id, string title)
+        {
+            // create a new tab with usercontrol instance and stretch align that to the tab
+            var tab = new TabItem();
+            tab.Header = title;
+
+            var tabcontent = new ConnectionTabControl();
             tab.Content = tabcontent;
             pgTabs.Items.Add(tab);
 
@@ -73,11 +114,14 @@ namespace QueryDesk
             tabcontent.HorizontalAlignment = HorizontalAlignment.Stretch;
             tabcontent.VerticalAlignment = VerticalAlignment.Stretch;
 
-            //adapter.SelectCommand = new MySqlCommand("select id, name from connection order by name asc", DB);
+
+            // setup the datasource to provide querynames
+
+            //  todo: make interface to provide data, doesn't have to come from a database
 
             MySqlDataAdapter adapter = new MySqlDataAdapter();
             var cmd = new MySqlCommand("select id, name from query where connection_id=?connection_id order by name asc", DB);
-            cmd.Parameters.AddWithValue("?connection_id", 1);
+            cmd.Parameters.AddWithValue("?connection_id", connection_id);
             
             adapter.SelectCommand = cmd;
 
@@ -87,11 +131,14 @@ namespace QueryDesk
             var dt = ds.Tables["query"];
             tabcontent.Initialize();
             tabcontent.setQuerySource(dt, "name");
+
+            pgTabs.SelectedIndex = pgTabs.Items.IndexOf(tab);
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            ConnectToServer("Test DB");
+            // test, this should happen when you double click a server entry
+            //ConnectToServer("Test DB");
         }
     }
 }
