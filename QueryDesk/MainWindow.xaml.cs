@@ -120,7 +120,7 @@ namespace QueryDesk
             //  todo: make interface to provide data, doesn't have to come from a database
 
             MySqlDataAdapter adapter = new MySqlDataAdapter();
-            var cmd = new MySqlCommand("select id, name from query where connection_id=?connection_id order by name asc", DB);
+            var cmd = new MySqlCommand("select id, name, sqltext from query where connection_id=?connection_id order by name asc", DB);
             cmd.Parameters.AddWithValue("?connection_id", connection_id);
             
             adapter.SelectCommand = cmd;

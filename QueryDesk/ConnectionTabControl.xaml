@@ -12,6 +12,7 @@
         <ComboBox x:Name="cmbQueries" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300" Margin="92,14,0,0"/>
         <DataGrid Height="200" Margin="10,79,10,10" VerticalAlignment="Bottom" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Bottom" />
         <Button Content="Go" HorizontalAlignment="Left" Margin="418,16,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
+        <TextBox x:Name="edSQL" HorizontalAlignment="Stretch" Height="23" Margin="15,53,10,0" TextWrapping="Wrap" Text="..." VerticalAlignment="Top"/>
 
 
     </Grid>

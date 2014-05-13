@@ -49,13 +49,45 @@ namespace QueryDesk
             what.VerticalAlignment = VerticalAlignment.Stretch;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private string AskForParameters(StoredQuery qry)
         {
-            // parse query parameters
+            var exampleqrystring = qry.ToString();
 
             // offer way to enter parameters
 
-            // open query
+            // todo: qry.parameters should be a dictonary with keys (parameter name) and values (parameter value)
+            //  so that the StoredQuery will contain the parameter values to bind to the real queries
+            foreach (var p in qry.parameters)
+            {
+                var answer = "";
+
+                // todo: put all parameters together with a dynamically setup form
+
+                // for now ask for parameter values 1 by 1
+                var askparam = new QuickQuestionWindow();
+                askparam.Question = p + " ?";
+
+                bool? b = askparam.ShowDialog();    // ok button lets this 'ShowModal' returns true
+                if (b == true)
+                {
+                    answer = askparam.Answer();
+                }
+
+                // replace stuff directly in the query as an example sql text
+                exampleqrystring = exampleqrystring.Replace("?" + p, "'" + answer + "'");
+                exampleqrystring = exampleqrystring.Replace(":" + p, "'" + answer + "'");
+            }
+
+            return exampleqrystring;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            // parse query parameters
+            var row = (DataRowView)(cmbQueries.SelectedItem);
+            var qry = new StoredQuery((string)row.Row["sqltext"]);
+
+            edSQL.Text = AskForParameters(qry);
 
             // display results in datagrid
         }

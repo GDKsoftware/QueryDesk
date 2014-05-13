@@ -9,7 +9,7 @@ namespace QueryDesk
     class StoredQuery
     {
         protected string sqltext;
-        protected List<string> parameters;
+        public List<string> parameters = new List<string>();
 
         public string SQL
         {
@@ -28,26 +28,42 @@ namespace QueryDesk
             var c = sqltext.Length;
             while (i < c)
             {
-                if (sqltext[i] == ':')
+                // start of parameter with : or ?
+                if ((sqltext[i] == ':') || (sqltext[i] == '?'))
                 {
                     inparam = true;
                 }
                 else if (inparam && (char.IsLetterOrDigit(sqltext[i]) || sqltext[i] == '_'))
                 {
+                    // parameter name continues as long as theres an alphanum char or underscore
                     paramname += sqltext[i];
                 }
-                else
+                else if (inparam)
                 {
-                    inparam = false;
+                    // some other char, probably ending the parameter name
                     parameters.Add(paramname);
+                    inparam = false;
+                    paramname = "";
                 }
+
+                i++;
+            }
+
+            // if we're on the end of string and we haven't stored the last paramname yet
+            if (inparam && (paramname != ""))
+            {
+                parameters.Add(paramname);
             }
         }
-    }
 
-    class StoredQueries
-    {
-        public Dictionary<string, StoredQuery> Queries;
+        public StoredQuery(string sql)
+        {
+            this.SQL = sql;
+        }
 
+        public override string ToString()
+        {
+            return this.SQL;
+        }
     }
 }
