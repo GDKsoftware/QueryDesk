@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MySql.Data.MySqlClient;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,11 +22,22 @@ namespace QueryDesk
     /// </summary>
     public partial class ConnectionTabControl : UserControl
     {
+        string dbconnectionstring = "";
+
+        MySqlConnection DB = null;
+
         public ConnectionTabControl()
         {
             InitializeComponent();
         }
         
+        public void setDatabaseConnection(string connstr)
+        {
+            dbconnectionstring = connstr;
+
+            LoadConnectionSettings();
+        }
+
         /// <summary>
         /// Fill combobox with items from datatable.
         /// </summary>
@@ -49,23 +61,40 @@ namespace QueryDesk
             what.VerticalAlignment = VerticalAlignment.Stretch;
         }
 
+        public void LoadConnectionSettings()
+        {
+            // todo: doesn't have to be MySQL, use some kind of factory that returns an interface to do queries with
+            try
+            {
+                DB = new MySqlConnection(dbconnectionstring);
+
+                DB.Open(); // throws exception if failed to connect
+            }
+            catch (MySql.Data.MySqlClient.MySqlException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         private string AskForParameters(StoredQuery qry)
         {
             var exampleqrystring = qry.ToString();
 
             // offer way to enter parameters
 
-            // todo: qry.parameters should be a dictonary with keys (parameter name) and values (parameter value)
-            //  so that the StoredQuery will contain the parameter values to bind to the real queries
-            foreach (var p in qry.parameters)
+            // note: can't foreach this, because we edit the values inside this loop
+            for (int i = 0; i < qry.parameters.Count; i++)
             {
+                var key = qry.parameters.Keys.ElementAt<string>(i);
+                //var value = qry.parameters[key];
+
                 var answer = "";
 
                 // todo: put all parameters together with a dynamically setup form
 
                 // for now ask for parameter values 1 by 1
                 var askparam = new QuickQuestionWindow();
-                askparam.Question = p + " ?";
+                askparam.Question = key + " ?";
 
                 bool? b = askparam.ShowDialog();    // ok button lets this 'ShowModal' returns true
                 if (b == true)
@@ -73,9 +102,11 @@ namespace QueryDesk
                     answer = askparam.Answer();
                 }
 
+                qry.parameters[key] = answer;
+
                 // replace stuff directly in the query as an example sql text
-                exampleqrystring = exampleqrystring.Replace("?" + p, "'" + answer + "'");
-                exampleqrystring = exampleqrystring.Replace(":" + p, "'" + answer + "'");
+                exampleqrystring = exampleqrystring.Replace("?" + key, "'" + answer + "'");
+                exampleqrystring = exampleqrystring.Replace(":" + key, "'" + answer + "'");
             }
 
             return exampleqrystring;
@@ -90,6 +121,35 @@ namespace QueryDesk
             edSQL.Text = AskForParameters(qry);
 
             // display results in datagrid
+
+            MySqlDataAdapter adapter = new MySqlDataAdapter();
+
+            var cmd = new MySqlCommand(qry.SQL, DB);
+            foreach (var p in qry.parameters)
+            {
+                cmd.Parameters.AddWithValue(p.Key, p.Value);
+            }
+            adapter.SelectCommand = cmd;
+
+            DataSet ds = new DataSet();
+
+            try
+            {
+                adapter.Fill(ds, "query");
+            }
+            catch (Exception x)
+            {
+                // todo: handle query errors in a better way
+                MessageBox.Show(x.Message);
+                return;
+            }
+
+            var dt = ds.Tables["query"];
+
+            gridQueryResults.AutoGenerateColumns = true;
+            gridQueryResults.ItemsSource = dt.DefaultView;
+            
+                 
         }
     }
 }

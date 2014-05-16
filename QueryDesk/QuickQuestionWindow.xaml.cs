@@ -37,5 +37,13 @@ namespace QueryDesk
         {
             this.DialogResult = true;
         }
+
+        private void edAnswer_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                btnOk_Click(btnOk, null);
+            }
+        }
     }
 }

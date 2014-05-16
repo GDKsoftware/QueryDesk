@@ -131,6 +131,7 @@ namespace QueryDesk
             var dt = ds.Tables["query"];
             tabcontent.Initialize();
             tabcontent.setQuerySource(dt, "name");
+            tabcontent.setDatabaseConnection("Server=;Database=;Uid=;Pwd=;");
 
             pgTabs.SelectedIndex = pgTabs.Items.IndexOf(tab);
         }

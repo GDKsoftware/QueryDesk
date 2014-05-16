@@ -10,9 +10,9 @@
         </Grid.ColumnDefinitions>
         <Label Content="test" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" />
         <ComboBox x:Name="cmbQueries" HorizontalAlignment="Left" VerticalAlignment="Top" Width="300" Margin="92,14,0,0"/>
-        <DataGrid Height="200" Margin="10,79,10,10" VerticalAlignment="Bottom" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Bottom" />
         <Button Content="Go" HorizontalAlignment="Left" Margin="418,16,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
-        <TextBox x:Name="edSQL" HorizontalAlignment="Stretch" Height="23" Margin="15,53,10,0" TextWrapping="Wrap" Text="..." VerticalAlignment="Top"/>
+        <TextBox x:Name="edSQL" HorizontalAlignment="Stretch" Height="23" Margin="10,53,10,0" TextWrapping="Wrap" Text="..." VerticalAlignment="Top"/>
+        <DataGrid x:Name="gridQueryResults" HorizontalAlignment="Stretch" Margin="10,81,10,10" VerticalAlignment="Stretch" />
 
 
     </Grid>

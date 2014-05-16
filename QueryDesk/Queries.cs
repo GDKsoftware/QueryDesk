@@ -9,7 +9,7 @@ namespace QueryDesk
     class StoredQuery
     {
         protected string sqltext;
-        public List<string> parameters = new List<string>();
+        public Dictionary<string, object> parameters = new Dictionary<string, object>();
 
         public string SQL
         {
@@ -41,9 +41,12 @@ namespace QueryDesk
                 else if (inparam)
                 {
                     // some other char, probably ending the parameter name
-                    parameters.Add(paramname);
+                    parameters.Add(paramname, null);
                     inparam = false;
                     paramname = "";
+
+                    // hack/fix parameter notation
+                    sqltext = sqltext.Replace(':' + paramname, '?' + paramname);
                 }
 
                 i++;
@@ -52,7 +55,10 @@ namespace QueryDesk
             // if we're on the end of string and we haven't stored the last paramname yet
             if (inparam && (paramname != ""))
             {
-                parameters.Add(paramname);
+                parameters.Add(paramname, null);
+
+                // hack/fix parameter notation
+                sqltext = sqltext.Replace(':' + paramname, '?' + paramname);
             }
         }
 
