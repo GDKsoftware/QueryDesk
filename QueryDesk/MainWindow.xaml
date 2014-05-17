@@ -17,23 +17,26 @@
         <TabControl x:Name="pgTabs">
             <TabItem x:Name="tabConnections" Header="Connections">
                 <Grid Background="White" Margin="0,-1,0,1">
-                    <ListBox x:Name="lstConnections" HorizontalAlignment="Left" Margin="7,10,0,10" Width="253" RenderTransformOrigin="0,0" MouseDoubleClick="lstConnections_MouseDoubleClick"/>
-                    <GroupBox Header="Settings" HorizontalAlignment="Left" Margin="265,41,0,0" VerticalAlignment="Top" Height="173" Width="307" UseLayoutRounding="True">
+                    <ListBox x:Name="lstConnections" HorizontalAlignment="Left" Margin="7,10,0,10" Width="253" RenderTransformOrigin="0,0" MouseDoubleClick="lstConnections_MouseDoubleClick" SelectionChanged="lstConnections_SelectionChanged"/>
+                    <GroupBox x:Name="pnlEditServerInfo" Header="Settings" HorizontalAlignment="Left" Margin="265,35,0,0" VerticalAlignment="Top" Height="250" Width="313" UseLayoutRounding="True">
                         <Grid Margin="0">
-                            <Label Content="Server" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.349,0.769"/>
-                            <TextBox x:Name="edServer" HorizontalAlignment="Left" Height="23" Margin="144,10,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="141"/>
-                            <Label Content="Username" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top"/>
-                            <TextBox x:Name="edUsername" HorizontalAlignment="Left" Height="23" Margin="144,36,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="141"/>
-                            <Label Content="Password" HorizontalAlignment="Left" Margin="10,62,0,0" VerticalAlignment="Top"/>
-                            <TextBox x:Name="edPassword" HorizontalAlignment="Left" Height="23" Margin="144,62,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="141"/>
-                            <Label Content="Database" HorizontalAlignment="Left" Margin="10,88,0,0" VerticalAlignment="Top"/>
-                            <TextBox x:Name="edDatabase" HorizontalAlignment="Left" Height="23" Margin="144,88,0,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="141"/>
-                            <Button Content="Save" HorizontalAlignment="Left" Margin="210,121,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_1"/>
+                            <Label Content="Name" HorizontalAlignment="Left" Margin="10,7,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.349,0.769"/>
+                            <TextBox x:Name="edName" HorizontalAlignment="Left" Height="23" Margin="144,7,0,0" TextWrapping="Wrap" Text="{Binding Path=name}" VerticalAlignment="Top" Width="141" TabIndex="0" />
+                            <Label Content="Server" HorizontalAlignment="Left" Margin="10,36,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.349,0.769"/>
+                            <TextBox x:Name="edServer" HorizontalAlignment="Left" Height="23" Margin="144,36,0,0" TextWrapping="Wrap" Text="{Binding Path=host}" VerticalAlignment="Top" Width="141" TabIndex="1"/>
+                            <Label Content="Port" HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.349,0.769"/>
+                            <TextBox x:Name="edPort" HorizontalAlignment="Left" Height="23" Margin="144,65,0,0" TextWrapping="Wrap" Text="{Binding Path=port}" VerticalAlignment="Top" Width="141" TabIndex="1"/>
+                            <Label Content="Username" HorizontalAlignment="Left" Margin="10,94,0,0" VerticalAlignment="Top"/>
+                            <TextBox x:Name="edUsername" HorizontalAlignment="Left" Height="23" Margin="144,94,0,0" TextWrapping="Wrap" Text="{Binding Path=username}" VerticalAlignment="Top" Width="141" TabIndex="2"/>
+                            <Label Content="Password" HorizontalAlignment="Left" Margin="10,122,0,0" VerticalAlignment="Top"/>
+                            <PasswordBox x:Name="edPassword" HorizontalAlignment="Left" Margin="144,122,0,0" Password="" VerticalAlignment="Top" Height="24" Width="141" TabIndex="3"/>
+                            <Label Content="Database" HorizontalAlignment="Left" Margin="10,151,0,0" VerticalAlignment="Top"/>
+                            <TextBox x:Name="edDatabase" HorizontalAlignment="Left" Height="23" Margin="144,151,0,0" TextWrapping="Wrap" Text="{Binding Path=databasename}" VerticalAlignment="Top" Width="141" TabIndex="4"/>
+                            <Button x:Name="btnSaveServerSettings" Content="Save" HorizontalAlignment="Left" Margin="195,196,0,0" VerticalAlignment="Top" Width="90" Click="btnSaveServerSettings_Click" RenderTransformOrigin="0.48,0.5"/>
                         </Grid>
                     </GroupBox>
-                    <Button Content="Add" HorizontalAlignment="Left" Margin="265,10,0,0" VerticalAlignment="Top" Width="53" Click="Button_Click"/>
-                    <Button Content="Edit" HorizontalAlignment="Left" Margin="323,10,0,0" VerticalAlignment="Top" Width="53"/>
-                    <Button Content="Delete" HorizontalAlignment="Left" Margin="381,10,0,0" VerticalAlignment="Top" Width="53"/>
+                    <Button x:Name="btnNewServer" Content="Add" HorizontalAlignment="Left" Margin="265,10,0,0" VerticalAlignment="Top" Width="53" Click="btnNewServer_Click"/>
+                    <Button x:Name="btnDeleteServer" Content="Delete" HorizontalAlignment="Left" Margin="323,10,0,0" VerticalAlignment="Top" Width="53" Click="btnDeleteServer_Click"/>
                 </Grid>
             </TabItem>
         </TabControl>

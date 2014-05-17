@@ -22,9 +22,10 @@ namespace QueryDesk
     /// </summary>
     public partial class ConnectionTabControl : UserControl
     {
-        string dbconnectionstring = "";
-
-        MySqlConnection DB = null;
+        private IAppDBServersAndQueries AppDB;
+        
+        private string dbconnectionstring = "";
+        private MySqlConnection DB = null;
 
         public ConnectionTabControl()
         {
@@ -39,26 +40,23 @@ namespace QueryDesk
         }
 
         /// <summary>
-        /// Fill combobox with items from datatable.
-        /// </summary>
-        /// <param name="dt">DataTable with query names</param>
-        /// <param name="field">Display text/short description fieldname</param>
-        public void setQuerySource(DataTable dt, string field)
-        {
-            cmbQueries.ItemsSource = dt.DefaultView;
-            cmbQueries.DisplayMemberPath = field;
-            cmbQueries.SelectedValuePath = "id";
-        }
-
-        /// <summary>
         /// Initialize some Tab related things to align.
         /// </summary>
-        public void Initialize()
+        public void Initialize(IAppDBServersAndQueries AppDB, long server_id)
         {
+            this.AppDB = AppDB;
+
             var what = Content as Grid;
             what.Margin = new Thickness(0, 0, 0, 0);
             what.HorizontalAlignment = HorizontalAlignment.Stretch;
             what.VerticalAlignment = VerticalAlignment.Stretch;
+
+            cmbQueries.ItemsSource = AppDB.getQueriesListing(server_id);
+            cmbQueries.DisplayMemberPath = "name";
+            cmbQueries.SelectedValuePath = "id";
+
+            // todo: get connectionstring from saved settings
+            setDatabaseConnection("");
         }
 
         public void LoadConnectionSettings()
@@ -115,8 +113,9 @@ namespace QueryDesk
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             // parse query parameters
-            var row = (DataRowView)(cmbQueries.SelectedItem);
-            var qry = new StoredQuery((string)row.Row["sqltext"]);
+            var row = cmbQueries.SelectedItem;
+            var link = new AppDBQueryLink(row);
+            var qry = new StoredQuery(link.sqltext);
 
             edSQL.Text = AskForParameters(qry);
 

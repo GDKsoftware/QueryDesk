@@ -71,6 +71,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AppDBDummy.cs" />
+    <Compile Include="AppDBIntf.cs" />
+    <Compile Include="AppDBMySQL.cs" />
     <Compile Include="Queries.cs" />
     <Compile Include="ConnectionTabControl.xaml.cs">
       <DependentUpon>ConnectionTabControl.xaml</DependentUpon>
