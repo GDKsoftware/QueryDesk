@@ -471,6 +471,21 @@ namespace QueryDesk
             NotifyPropertyChanged("databasename");
             NotifyPropertyChanged("extraparams");
         }
+
+        public string getConnectionString()
+        {
+            // todo: what if this isn't a mysqlconnection...
+
+            // todo: port
+
+            // todo: extraparams
+
+            return
+                "Server=" + host + ";" +
+                "Database=" + databasename + ";" +
+                "Uid=" + username + ";" +
+                "Pwd=" + password + ";";
+        }
     }
 
     public interface IAppDBEditableServers

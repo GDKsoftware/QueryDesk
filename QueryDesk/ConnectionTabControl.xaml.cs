@@ -54,9 +54,6 @@ namespace QueryDesk
             cmbQueries.ItemsSource = AppDB.getQueriesListing(server_id);
             cmbQueries.DisplayMemberPath = "name";
             cmbQueries.SelectedValuePath = "id";
-
-            // todo: get connectionstring from saved settings
-            setDatabaseConnection("");
         }
 
         public void LoadConnectionSettings()

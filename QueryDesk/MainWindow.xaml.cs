@@ -35,7 +35,7 @@ namespace QueryDesk
             edUsername.DataContext = CurrentSelectedServerLink;
             edDatabase.DataContext = CurrentSelectedServerLink;
 
-            // todo: passwordbox bindings werken niet hetzelfde, moet anders/handmatig geregeld worden
+            // note: passwordbox bindings are done manually
             //edPassword.DataContext = CurrentSelectedServerLink;
 
             LoadConnectionSettings();
@@ -62,7 +62,7 @@ namespace QueryDesk
                 var connection = new AppDBServerLink(lstConnections.SelectedItem);
 
                 // connect to the right server
-                ConnectToServer(connection.id, connection.name);
+                ConnectToServer(connection.id, connection.name, connection.getConnectionString());
             }
         }
 
@@ -120,7 +120,7 @@ namespace QueryDesk
         /// </summary>
         /// <param name="connection_id">id</param>
         /// <param name="title">connection name to put in the tab header, should probably be accompanied by the id?</param>
-        private void ConnectToServer(long connection_id, string title)
+        private void ConnectToServer(long connection_id, string title, string connectionstring)
         {
             // create a new tab with usercontrol instance and stretch align that to the tab
             var tab = new TabItem();
@@ -140,6 +140,8 @@ namespace QueryDesk
             // setup the datasource to provide querynames
             tabcontent.Initialize(AppDB, connection_id);
 
+            tabcontent.setDatabaseConnection(connectionstring);
+
             pgTabs.SelectedIndex = pgTabs.Items.IndexOf(tab);
         }
 
@@ -152,6 +154,7 @@ namespace QueryDesk
             if (selection != null)
             {
                 CurrentSelectedServerLink.SetSource(selection);
+                edPassword.Password = CurrentSelectedServerLink.password;
             }
         }
 
@@ -160,6 +163,7 @@ namespace QueryDesk
             var editable = (IAppDBEditableServers)AppDB;
 
             long id = CurrentSelectedServerLink.id;
+            CurrentSelectedServerLink.password = edPassword.Password;
             if (editable.saveServer(CurrentSelectedServerLink) != id)
             {
                 RefreshConnectionList();
