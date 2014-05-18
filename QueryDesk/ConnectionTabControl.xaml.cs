@@ -46,6 +46,8 @@ namespace QueryDesk
         {
             this.AppDB = AppDB;
 
+            btnEditQuery.IsEnabled = (AppDB is IAppDBEditableQueries);
+
             var what = Content as Grid;
             what.Margin = new Thickness(0, 0, 0, 0);
             what.HorizontalAlignment = HorizontalAlignment.Stretch;
@@ -67,7 +69,7 @@ namespace QueryDesk
             }
             catch (MySql.Data.MySqlClient.MySqlException ex)
             {
-                MessageBox.Show(ex.Message);
+                throw;
             }
         }
 
@@ -107,45 +109,77 @@ namespace QueryDesk
             return exampleqrystring;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void cmbQueries_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var row = cmbQueries.SelectedItem;
+            if (row != null)
+            {
+                var link = new AppDBQueryLink(row);
+                edSQL.Text = link.sqltext;
+            }
+        }
+
+        private void btnGoQuery_Click(object sender, RoutedEventArgs e)
         {
             // parse query parameters
             var row = cmbQueries.SelectedItem;
-            var link = new AppDBQueryLink(row);
-            var qry = new StoredQuery(link.sqltext);
-
-            edSQL.Text = AskForParameters(qry);
-
-            // display results in datagrid
-
-            MySqlDataAdapter adapter = new MySqlDataAdapter();
-
-            var cmd = new MySqlCommand(qry.SQL, DB);
-            foreach (var p in qry.parameters)
+            if (row != null)
             {
-                cmd.Parameters.AddWithValue(p.Key, p.Value);
+                var link = new AppDBQueryLink(row);
+                var qry = new StoredQuery(link.sqltext);
+
+                edSQL.Text = AskForParameters(qry);
+
+                // display results in datagrid
+
+                MySqlDataAdapter adapter = new MySqlDataAdapter();
+
+                var cmd = new MySqlCommand(qry.SQL, DB);
+                foreach (var p in qry.parameters)
+                {
+                    cmd.Parameters.AddWithValue(p.Key, p.Value);
+                }
+                adapter.SelectCommand = cmd;
+
+                DataSet ds = new DataSet();
+
+                try
+                {
+                    adapter.Fill(ds, "query");
+                }
+                catch (Exception x)
+                {
+                    // todo: handle query errors in a better way
+                    MessageBox.Show(x.Message);
+                    return;
+                }
+
+                var dt = ds.Tables["query"];
+
+                gridQueryResults.AutoGenerateColumns = true;
+                gridQueryResults.ItemsSource = dt.DefaultView;
             }
-            adapter.SelectCommand = cmd;
+        }
 
-            DataSet ds = new DataSet();
-
-            try
+        private void btnEditQuery_Click(object sender, RoutedEventArgs e)
+        {
+            var row = cmbQueries.SelectedItem;
+            if (row != null)
             {
-                adapter.Fill(ds, "query");
-            }
-            catch (Exception x)
-            {
-                // todo: handle query errors in a better way
-                MessageBox.Show(x.Message);
-                return;
-            }
+                var link = new AppDBQueryLink(row);
 
-            var dt = ds.Tables["query"];
+                var frm = new frmQueryEdit();
+                frm.Initialize(link);
 
-            gridQueryResults.AutoGenerateColumns = true;
-            gridQueryResults.ItemsSource = dt.DefaultView;
-            
-                 
+                bool? b = frm.ShowDialog();
+                if (b == true)
+                {
+                    var editable = (IAppDBEditableQueries)AppDB;
+                    editable.saveQuery(link);
+
+                    edSQL.Text = link.sqltext;
+                }
+            }
         }
     }
 }

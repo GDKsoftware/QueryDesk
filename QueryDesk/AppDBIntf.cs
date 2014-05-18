@@ -73,7 +73,7 @@ namespace QueryDesk
             }
         }
 
-        public long connection_id
+        public int connection_id
         {
             get
             {
@@ -81,12 +81,11 @@ namespace QueryDesk
                 if (data is DataRowView)
                 {
                     DataRowView row = (DataRowView)data;
-                    // todo: panic, why doesn't this have a cast to long available?
-                    return (long)row["connection_id"];
+                    return (int)row["connection_id"];
                 }
                 else
                 {
-                    return (long)(data.GetType().GetProperty("connection_id").GetValue(data, null));
+                    return (int)(data.GetType().GetProperty("connection_id").GetValue(data, null));
                 }
             }
             set
@@ -97,6 +96,7 @@ namespace QueryDesk
                 NotifyPropertyChanged("connection_id");
             }
         }
+
         public string name
         {
             get
@@ -129,6 +129,7 @@ namespace QueryDesk
                 NotifyPropertyChanged("name");
             }
         }
+
         public string sqltext
         {
             get

@@ -61,14 +61,19 @@ namespace QueryDesk
                 // determine selected connection
                 var connection = new AppDBServerLink(lstConnections.SelectedItem);
 
+                // todo: handle connection errors before opening new tab
+
                 // connect to the right server
-                ConnectToServer(connection.id, connection.name, connection.getConnectionString());
+                Cursor = Cursors.Wait;
+                try
+                {
+                    ConnectToServer(connection.id, connection.name, connection.getConnectionString());
+                }
+                finally
+                {
+                    Cursor = Cursors.Arrow;
+                }
             }
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
         }
 
         private void EnableDisable()
@@ -116,33 +121,41 @@ namespace QueryDesk
         }
 
         /// <summary>
-        /// Open a new tab for the selected server.
+        /// Open a new tab for the selected server, if we can connect to the server.
         /// </summary>
         /// <param name="connection_id">id</param>
         /// <param name="title">connection name to put in the tab header, should probably be accompanied by the id?</param>
         private void ConnectToServer(long connection_id, string title, string connectionstring)
         {
-            // create a new tab with usercontrol instance and stretch align that to the tab
-            var tab = new TabItem();
-            tab.Header = title;
+            try
+            {
+                var tabcontent = new ConnectionTabControl();
 
-            var tabcontent = new ConnectionTabControl();
-            tab.Content = tabcontent;
-            pgTabs.Items.Add(tab);
+                tabcontent.Height = Double.NaN;
+                tabcontent.Width = Double.NaN;
 
-            tabcontent.Height = Double.NaN;
-            tabcontent.Width = Double.NaN;
+                tabcontent.Margin = new Thickness(0, 0, 0, 0);
+                tabcontent.HorizontalAlignment = HorizontalAlignment.Stretch;
+                tabcontent.VerticalAlignment = VerticalAlignment.Stretch;
 
-            tabcontent.Margin = new Thickness(0, 0, 0, 0);
-            tabcontent.HorizontalAlignment = HorizontalAlignment.Stretch;
-            tabcontent.VerticalAlignment = VerticalAlignment.Stretch;
+                // setup the datasource to provide querynames
+                tabcontent.Initialize(AppDB, connection_id);
 
-            // setup the datasource to provide querynames
-            tabcontent.Initialize(AppDB, connection_id);
+                // this also connects to the database and will throw an exception when we can't connect
+                tabcontent.setDatabaseConnection(connectionstring);
 
-            tabcontent.setDatabaseConnection(connectionstring);
+                // create a new tab with usercontrol instance and stretch align that to the tab
+                var tab = new TabItem();
+                tab.Header = title;
+                tab.Content = tabcontent;
 
-            pgTabs.SelectedIndex = pgTabs.Items.IndexOf(tab);
+                pgTabs.Items.Add(tab);
+                pgTabs.SelectedIndex = pgTabs.Items.IndexOf(tab);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void lstConnections_SelectionChanged(object sender, SelectionChangedEventArgs e)

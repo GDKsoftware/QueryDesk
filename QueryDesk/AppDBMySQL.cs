@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace QueryDesk
 {
-    class AppDBMySQL: IAppDBServersAndQueries, IAppDBEditableServers
+    class AppDBMySQL: IAppDBServersAndQueries, IAppDBEditableServers, IAppDBEditableQueries
     {
         private string connectionstring;
         private MySqlConnection DB;
@@ -49,7 +49,7 @@ namespace QueryDesk
         public IEnumerable getQueriesListing(long server_id)
         {
             MySqlDataAdapter adapter = new MySqlDataAdapter();
-            var cmd = new MySqlCommand("select id, name, sqltext from query where connection_id=?connection_id order by name asc", DB);
+            var cmd = new MySqlCommand("select id, connection_id, name, sqltext from query where connection_id=?connection_id order by name asc", DB);
             cmd.Parameters.AddWithValue("?connection_id", server_id);
 
             adapter.SelectCommand = cmd;
@@ -114,6 +114,55 @@ namespace QueryDesk
             {
                 // if this server isn't an entry in the database, that's ok with me
                 //throw new Exception("");
+            }
+        }
+
+        public long saveQuery(AppDBQueryLink query)
+        {
+            MySqlCommand qry;
+
+            if (query.id > 0)
+            {
+                // update
+                qry = new MySqlCommand("update query set name=?name, sqltext=?sqltext, connection_id=?connection_id where id=?id", DB);
+                qry.Parameters.AddWithValue("?id", query.id);
+            }
+            else
+            {
+                // insert
+                qry = new MySqlCommand("insert into query ( connection_id, name, sqltext) values (?connection_id,?name,?sqltext); select last_insert_id();", DB);
+            }
+
+            qry.Parameters.AddWithValue("?connection_id", query.connection_id);
+            qry.Parameters.AddWithValue("?name", query.name);
+            qry.Parameters.AddWithValue("?sqltext", query.sqltext);
+
+            qry.ExecuteNonQuery();
+
+            if (query.id <= 0)
+            {
+                query.id = qry.LastInsertedId;
+            }
+
+            return query.id;
+        }
+
+        public void delQuery(AppDBQueryLink query)
+        {
+            MySqlCommand qry;
+
+            if (query.id > 0)
+            {
+                qry = new MySqlCommand("delete from query where id=?id", DB);
+                qry.Parameters.AddWithValue("?id", query.id);
+
+                qry.ExecuteNonQuery();
+
+                query.id = 0;
+            }
+            else
+            {
+                // ???
             }
         }
     }

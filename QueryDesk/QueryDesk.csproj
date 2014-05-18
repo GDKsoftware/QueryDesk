@@ -81,6 +81,9 @@
     <Compile Include="QuickQuestionWindow.xaml.cs">
       <DependentUpon>QuickQuestionWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="QueryEdit.xaml.cs">
+      <DependentUpon>QueryEdit.xaml</DependentUpon>
+    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -98,6 +101,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="QuickQuestionWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="QueryEdit.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
