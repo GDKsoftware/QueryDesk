@@ -125,7 +125,7 @@ namespace QueryDesk
         /// </summary>
         /// <param name="connection_id">id</param>
         /// <param name="title">connection name to put in the tab header, should probably be accompanied by the id?</param>
-        private void ConnectToServer(long connection_id, string title, string connectionstring)
+        private void ConnectToServer(int connection_id, string title, string connectionstring)
         {
             try
             {

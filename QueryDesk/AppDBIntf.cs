@@ -48,7 +48,7 @@ namespace QueryDesk
             }
         }
 
-        public long id
+        public int id
         {
             get
             {
@@ -56,12 +56,11 @@ namespace QueryDesk
                 if (data is DataRowView)
                 {
                     DataRowView row = (DataRowView)data;
-                    // todo: panic, why doesn't this have a cast to long available?
                     return (int)row["id"];
                 }
                 else
                 {
-                    return (long)(data.GetType().GetProperty("id").GetValue(data, null));
+                    return (int)(data.GetType().GetProperty("id").GetValue(data, null));
                 }
             }
             set
@@ -180,7 +179,7 @@ namespace QueryDesk
             }
         }
 
-        public long id
+        public int id
         {
             get
             {
@@ -188,12 +187,11 @@ namespace QueryDesk
                 if (data is DataRowView)
                 {
                     DataRowView row = (DataRowView)data;
-                    // todo: panic, why doesn't this have a cast to long available?
                     return (int)row["id"];
                 }
                 else
                 {
-                    return (long)(data.GetType().GetProperty("id").GetValue(data, null));
+                    return (int)(data.GetType().GetProperty("id").GetValue(data, null));
                 }
             }
             set

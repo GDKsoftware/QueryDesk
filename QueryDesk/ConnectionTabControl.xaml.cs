@@ -23,7 +23,8 @@ namespace QueryDesk
     public partial class ConnectionTabControl : UserControl
     {
         private IAppDBServersAndQueries AppDB;
-        
+        private int connection_id = 0;
+
         private string dbconnectionstring = "";
         private MySqlConnection DB = null;
 
@@ -42,9 +43,10 @@ namespace QueryDesk
         /// <summary>
         /// Initialize some Tab related things to align.
         /// </summary>
-        public void Initialize(IAppDBServersAndQueries AppDB, long server_id)
+        public void Initialize(IAppDBServersAndQueries AppDB, int server_id)
         {
             this.AppDB = AppDB;
+            this.connection_id = server_id;
 
             btnEditQuery.IsEnabled = (AppDB is IAppDBEditableQueries);
 
@@ -53,7 +55,12 @@ namespace QueryDesk
             what.HorizontalAlignment = HorizontalAlignment.Stretch;
             what.VerticalAlignment = VerticalAlignment.Stretch;
 
-            cmbQueries.ItemsSource = AppDB.getQueriesListing(server_id);
+            Reload();
+        }
+
+        private void Reload()
+        {
+            cmbQueries.ItemsSource = AppDB.getQueriesListing(connection_id);
             cmbQueries.DisplayMemberPath = "name";
             cmbQueries.SelectedValuePath = "id";
         }
@@ -179,6 +186,22 @@ namespace QueryDesk
 
                     edSQL.Text = link.sqltext;
                 }
+            }
+        }
+
+        private void btnAddQuery_Click(object sender, RoutedEventArgs e)
+        {
+            var link = new AppDBQueryLink(new AppDBDummyQuery(0, connection_id, "New Query", ""));
+            var frm = new frmQueryEdit();
+            frm.Initialize(link);
+
+            bool? b = frm.ShowDialog();
+            if (b == true)
+            {
+                var editable = (IAppDBEditableQueries)AppDB;
+                editable.saveQuery(link);
+
+                Reload();
             }
         }
     }

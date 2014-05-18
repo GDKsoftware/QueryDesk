@@ -9,8 +9,8 @@ namespace QueryDesk
 {
     class AppDBDummyQuery
     {
-        public long id {get; set;}
-        public long connection_id {get; set;}
+        public int id {get; set;}
+        public int connection_id {get; set;}
         public string name {get; set;}
         public string sqltext {get; set;}
 
@@ -25,7 +25,7 @@ namespace QueryDesk
 
     class AppDBDummyServer
     {
-        public long id { get; set; }
+        public int id { get; set; }
         public string name { get; set; }
         public string host { get; set; }
         public int port { get; set; }
