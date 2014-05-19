@@ -6,7 +6,7 @@
         <Label Content="Short desc." HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
         <Label HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Height="28" Width="65" Content="SQL" />
         <TextBox x:Name="edShortDescription" Height="23" Margin="93,14,10,0" TextWrapping="Wrap" Text="Fancy Query" VerticalAlignment="Top"/>
-        <TextBox x:Name="edSQL" TextWrapping="Wrap" Text="select * from test where bla = 1 and etc = 2 and balbla = 3 order by bla asc, etc desc" Margin="10,69,10,53" VerticalScrollBarVisibility="Visible"/>
+        <TextBox x:Name="edSQL" TextWrapping="Wrap" Text="select * from test where bla = 1 and etc = 2 and balbla = 3 order by bla asc, etc desc" Margin="10,69,10,53" VerticalScrollBarVisibility="Visible" AcceptsReturn="True" AcceptsTab="True"/>
         <Button x:Name="btnOk" Content="OK" VerticalAlignment="Bottom" Margin="0,0,10,10" IsDefault="True" Click="btnOk_Click" HorizontalAlignment="Right" Width="75"/>
         <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Right" Margin="0,0,90,10" VerticalAlignment="Bottom" IsCancel="True" Click="btnCancel_Click" Width="69"/>
 
