@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace QueryDesk
 {
-    class StoredQuery
+    public class StoredQuery
     {
         protected string sqltext;
         public Dictionary<string, object> parameters = new Dictionary<string, object>();

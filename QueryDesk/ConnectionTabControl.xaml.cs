@@ -28,6 +28,8 @@ namespace QueryDesk
         private string dbconnectionstring = "";
         private MySqlConnection DB = null;
 
+        private StoredQuery CurrentQuery = null;
+
         public ConnectionTabControl()
         {
             InitializeComponent();
@@ -82,9 +84,27 @@ namespace QueryDesk
 
         private string AskForParameters(StoredQuery qry)
         {
-            var exampleqrystring = qry.ToString();
+            string exampleqrystring = null;
 
-            // offer way to enter parameters
+            var frm = new QueryParams();
+            frm.SetQuery(qry);
+            bool? b = frm.ShowDialog();
+            if (b == true)
+            {
+                frm.SaveParamsToQuery();
+
+                exampleqrystring = qry.ToString();
+
+                foreach (var param in qry.parameters)
+                {
+                    exampleqrystring = exampleqrystring.Replace("?" + param.Key, "'" + param.Value + "'");
+                    exampleqrystring = exampleqrystring.Replace(":" + param.Key, "'" + param.Value + "'");
+                }
+            }
+
+
+/*
+            // old way to enter parameters 1 by 1
 
             // note: can't foreach this, because we edit the values inside this loop
             for (int i = 0; i < qry.parameters.Count; i++)
@@ -112,6 +132,7 @@ namespace QueryDesk
                 exampleqrystring = exampleqrystring.Replace("?" + key, "'" + answer + "'");
                 exampleqrystring = exampleqrystring.Replace(":" + key, "'" + answer + "'");
             }
+*/
 
             return exampleqrystring;
         }
@@ -122,6 +143,7 @@ namespace QueryDesk
             if (row != null)
             {
                 var link = new AppDBQueryLink(row);
+                CurrentQuery = null;
                 edSQL.Text = link.sqltext;
             }
         }
@@ -133,16 +155,19 @@ namespace QueryDesk
             if (row != null)
             {
                 var link = new AppDBQueryLink(row);
-                var qry = new StoredQuery(link.sqltext);
+                if (CurrentQuery == null)
+                {
+                    CurrentQuery = new StoredQuery(link.sqltext);
+                }
 
-                edSQL.Text = AskForParameters(qry);
+                edSQL.Text = AskForParameters(CurrentQuery);
 
                 // display results in datagrid
 
                 MySqlDataAdapter adapter = new MySqlDataAdapter();
 
-                var cmd = new MySqlCommand(qry.SQL, DB);
-                foreach (var p in qry.parameters)
+                var cmd = new MySqlCommand(CurrentQuery.SQL, DB);
+                foreach (var p in CurrentQuery.parameters)
                 {
                     cmd.Parameters.AddWithValue(p.Key, p.Value);
                 }

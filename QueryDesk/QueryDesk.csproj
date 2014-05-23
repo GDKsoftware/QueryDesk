@@ -78,6 +78,9 @@
     <Compile Include="ConnectionTabControl.xaml.cs">
       <DependentUpon>ConnectionTabControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="QueryParams.xaml.cs">
+      <DependentUpon>QueryParams.xaml</DependentUpon>
+    </Compile>
     <Compile Include="QuickQuestionWindow.xaml.cs">
       <DependentUpon>QuickQuestionWindow.xaml</DependentUpon>
     </Compile>
@@ -97,6 +100,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="ConnectionTabControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="QueryParams.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
