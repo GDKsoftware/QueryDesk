@@ -146,7 +146,13 @@ namespace QueryDesk
 
                 // create a new tab with usercontrol instance and stretch align that to the tab
                 var tab = new TabItem();
-                tab.Header = title;
+
+                var header = new CloseableTabHeader(title);
+                header.OnClose = () =>
+                {
+                    pgTabs.Items.Remove(tab);
+                };
+                tab.Header = header;
                 tab.Content = tabcontent;
 
                 pgTabs.Items.Add(tab);

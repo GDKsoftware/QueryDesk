@@ -74,6 +74,9 @@
     <Compile Include="AppDBDummy.cs" />
     <Compile Include="AppDBIntf.cs" />
     <Compile Include="AppDBMySQL.cs" />
+    <Compile Include="CloseableTabHeader.xaml.cs">
+      <DependentUpon>CloseableTabHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Queries.cs" />
     <Compile Include="ConnectionTabControl.xaml.cs">
       <DependentUpon>ConnectionTabControl.xaml</DependentUpon>
@@ -87,6 +90,10 @@
     <Compile Include="QueryEdit.xaml.cs">
       <DependentUpon>QueryEdit.xaml</DependentUpon>
     </Compile>
+    <Page Include="CloseableTabHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
