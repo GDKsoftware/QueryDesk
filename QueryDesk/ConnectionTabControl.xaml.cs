@@ -161,10 +161,17 @@ namespace QueryDesk
                     return;
                 }
 
-                var dt = ds.Tables["query"];
-
                 gridQueryResults.AutoGenerateColumns = true;
-                gridQueryResults.ItemsSource = dt.DefaultView;
+
+                var dt = ds.Tables["query"];
+                if (dt != null)
+                {
+                    gridQueryResults.ItemsSource = dt.DefaultView;
+                }
+                else
+                {
+                    gridQueryResults.ItemsSource = null;
+                }
             }
         }
 
