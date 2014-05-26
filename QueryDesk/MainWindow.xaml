@@ -35,8 +35,8 @@
                             <Button x:Name="btnSaveServerSettings" Content="Save" HorizontalAlignment="Left" Margin="195,196,0,0" VerticalAlignment="Top" Width="90" Click="btnSaveServerSettings_Click" RenderTransformOrigin="0.48,0.5"/>
                         </Grid>
                     </GroupBox>
-                    <Button x:Name="btnNewServer" Content="Add" HorizontalAlignment="Left" Margin="265,10,0,0" VerticalAlignment="Top" Width="53" Click="btnNewServer_Click"/>
-                    <Button x:Name="btnDeleteServer" Content="Delete" HorizontalAlignment="Left" Margin="323,10,0,0" VerticalAlignment="Top" Width="53" Click="btnDeleteServer_Click"/>
+                    <Button x:Name="btnNewServer" Content="Add" HorizontalAlignment="Left" Margin="265,10,0,0" VerticalAlignment="Top" Width="53" Click="btnNewServer_Click" ToolTip="Add new connection"/>
+                    <Button x:Name="btnDeleteServer" Content="Delete" HorizontalAlignment="Left" Margin="323,10,0,0" VerticalAlignment="Top" Width="53" Click="btnDeleteServer_Click" ToolTip="Delete connection"/>
                 </Grid>
             </TabItem>
         </TabControl>
