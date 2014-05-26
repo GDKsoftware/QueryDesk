@@ -10,11 +10,11 @@
         </Grid.ColumnDefinitions>
         <Label Content="Query" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,11,0,0" />
         <ComboBox x:Name="cmbQueries" VerticalAlignment="Top" Margin="72,13,198,0" SelectionChanged="cmbQueries_SelectionChanged"/>
-        <Button x:Name="btnGoQuery" Content="Go" HorizontalAlignment="Right" Margin="0,14,118,0" VerticalAlignment="Top" Width="75" Click="btnGoQuery_Click"/>
+        <Button x:Name="btnGoQuery" Content="Go" HorizontalAlignment="Right" Margin="0,14,118,0" VerticalAlignment="Top" Width="75" Click="btnGoQuery_Click" ToolTip="Execute query"/>
         <TextBox x:Name="edSQL" HorizontalAlignment="Stretch" Height="23" Margin="10,53,10,0" TextWrapping="Wrap" Text="..." VerticalAlignment="Top"/>
         <DataGrid x:Name="gridQueryResults" HorizontalAlignment="Stretch" Margin="10,81,10,10" VerticalAlignment="Stretch" CanUserResizeRows="False" IsReadOnly="True" />
-        <Button x:Name="btnEditQuery" Content="Edit" HorizontalAlignment="Right" Margin="0,14,38,0" VerticalAlignment="Top" Width="75" Click="btnEditQuery_Click"/>
-        <Button x:Name="btnAddQuery" Content="+" HorizontalAlignment="Right" Height="20" Margin="0,14,10,0" VerticalAlignment="Top" Width="23" Click="btnAddQuery_Click"/>
+        <Button x:Name="btnEditQuery" Content="Edit" HorizontalAlignment="Right" Margin="0,14,38,0" VerticalAlignment="Top" Width="75" Click="btnEditQuery_Click" ToolTip="Edit query"/>
+        <Button x:Name="btnAddQuery" Content="+" HorizontalAlignment="Right" Height="20" Margin="0,14,10,0" VerticalAlignment="Top" Width="23" Click="btnAddQuery_Click" ToolTip="Add new query"/>
 
 
     </Grid>
