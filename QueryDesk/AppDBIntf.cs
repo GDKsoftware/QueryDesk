@@ -11,7 +11,20 @@ using System.Threading.Tasks;
 
 namespace QueryDesk
 {
-    public enum AppDBServerType { Void, MySQL };
+    public enum AppDBServerType { Void = 0, MySQL = 1, MSSQL = 2 };
+
+    public static class AppDBTypes
+    {
+        public static Dictionary<int, string> List()
+        {
+            var r = new Dictionary<int, string>();
+            r.Add((int)AppDBServerType.Void, "");
+            r.Add((int)AppDBServerType.MySQL, "MySQL");
+            r.Add((int)AppDBServerType.MSSQL, "MSSQL");
+
+            return r;
+        }
+    }
 
     /// <summary>
     /// Query class providing properties to bind from code and from WPF, reading and writing to similar properties of a non-prefined object, or a DataRowView
@@ -209,6 +222,39 @@ namespace QueryDesk
                 }
 
                 NotifyPropertyChanged("id");
+            }
+        }
+
+        public int type
+        {
+            get
+            {
+                Debug.Assert(data != null);
+                if (data is DataRowView)
+                {
+                    DataRowView row = (DataRowView)data;
+                    return (int)row["type"];
+                }
+                else
+                {
+                    return (int)(data.GetType().GetProperty("type").GetValue(data, null));
+                }
+            }
+            set
+            {
+                Debug.Assert(data != null);
+
+                if (data is DataRowView)
+                {
+                    DataRowView row = (DataRowView)data;
+                    row["type"] = value;
+                }
+                else
+                {
+                    data.GetType().GetProperty("type").SetValue(data, value);
+                }
+
+                NotifyPropertyChanged("type");
             }
         }
 
@@ -462,6 +508,7 @@ namespace QueryDesk
         {
             data = source;
 
+            NotifyPropertyChanged("type");
             NotifyPropertyChanged("name");
             NotifyPropertyChanged("host");
             NotifyPropertyChanged("port");

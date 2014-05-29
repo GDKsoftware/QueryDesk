@@ -77,6 +77,7 @@
     <Compile Include="CloseableTabHeader.xaml.cs">
       <DependentUpon>CloseableTabHeader.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ConnectionFactory.cs" />
     <Compile Include="Queries.cs" />
     <Compile Include="ConnectionTabControl.xaml.cs">
       <DependentUpon>ConnectionTabControl.xaml</DependentUpon>

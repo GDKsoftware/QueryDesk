@@ -1,5 +1,4 @@
-﻿using MySql.Data.MySqlClient;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,16 +16,20 @@ using System.Data;
 
 namespace QueryDesk
 {
+    class QDConnectionFailedException : Exception { };
+    class QDConnectionTypeNotSupportedException : Exception { };
+
     /// <summary>
     /// Interaction logic for UserControl1.xaml
     /// </summary>
     public partial class ConnectionTabControl : UserControl
     {
         private IAppDBServersAndQueries AppDB;
+        private IQueryableConnection DBConnection;
         private int connection_id = 0;
 
+        private AppDBServerType dbtype = AppDBServerType.Void;
         private string dbconnectionstring = "";
-        private MySqlConnection DB = null;
 
         private StoredQuery CurrentQuery = null;
 
@@ -35,9 +38,10 @@ namespace QueryDesk
             InitializeComponent();
         }
         
-        public void setDatabaseConnection(string connstr)
+        public void setDatabaseConnection(AppDBServerType type, string connstr)
         {
             dbconnectionstring = connstr;
+            dbtype = type;
 
             LoadConnectionSettings();
         }
@@ -70,15 +74,15 @@ namespace QueryDesk
         public void LoadConnectionSettings()
         {
             // todo: doesn't have to be MySQL, use some kind of factory that returns an interface to do queries with
-            try
+            DBConnection = ConnectionFactory.NewConnection((int)dbtype, dbconnectionstring);
+            if (DBConnection == null)
             {
-                DB = new MySqlConnection(dbconnectionstring);
-
-                DB.Open(); // throws exception if failed to connect
+                throw new QDConnectionTypeNotSupportedException();
             }
-            catch (MySql.Data.MySqlClient.MySqlException ex)
+
+            if (!DBConnection.Connect())
             {
-                throw;
+                throw new QDConnectionFailedException();
             }
         }
 
@@ -162,22 +166,15 @@ namespace QueryDesk
 
                 edSQL.Text = AskForParameters(CurrentQuery);
 
-                // display results in datagrid
+                // execute query and get result set
 
-                MySqlDataAdapter adapter = new MySqlDataAdapter();
+                DBConnection.Query(CurrentQuery);
 
-                var cmd = new MySqlCommand(CurrentQuery.SQL, DB);
-                foreach (var p in CurrentQuery.parameters)
-                {
-                    cmd.Parameters.AddWithValue(p.Key, p.Value);
-                }
-                adapter.SelectCommand = cmd;
-
-                DataSet ds = new DataSet();
-
+                DataTable dt;
                 try
                 {
-                    adapter.Fill(ds, "query");
+                    // todo: datatable contains all results, no cursor/rowtravel/stream
+                    dt = DBConnection.ResultsAsDataTable();
                 }
                 catch (Exception x)
                 {
@@ -186,9 +183,9 @@ namespace QueryDesk
                     return;
                 }
 
+                // display results in datagrid
                 gridQueryResults.AutoGenerateColumns = true;
 
-                var dt = ds.Tables["query"];
                 if (dt != null)
                 {
                     gridQueryResults.ItemsSource = dt.DefaultView;

@@ -29,14 +29,13 @@ namespace QueryDesk
         {
             InitializeComponent();
 
-            edName.DataContext = CurrentSelectedServerLink;
-            edServer.DataContext = CurrentSelectedServerLink;
-            edPort.DataContext = CurrentSelectedServerLink;
-            edUsername.DataContext = CurrentSelectedServerLink;
-            edDatabase.DataContext = CurrentSelectedServerLink;
+            // datacontext of window is inherited by all controls
+            this.DataContext = CurrentSelectedServerLink;
 
-            // note: passwordbox bindings are done manually
-            //edPassword.DataContext = CurrentSelectedServerLink;
+            // listsource for combobox
+            cbType.ItemsSource = AppDBTypes.List();
+            cbType.DisplayMemberPath = "Value";
+            cbType.SelectedValuePath = "Key";
 
             LoadConnectionSettings();
 
@@ -67,7 +66,7 @@ namespace QueryDesk
                 Cursor = Cursors.Wait;
                 try
                 {
-                    ConnectToServer(connection.id, connection.name, connection.getConnectionString());
+                    ConnectToServer(connection);
                 }
                 finally
                 {
@@ -125,7 +124,7 @@ namespace QueryDesk
         /// </summary>
         /// <param name="connection_id">id</param>
         /// <param name="title">connection name to put in the tab header, should probably be accompanied by the id?</param>
-        private void ConnectToServer(int connection_id, string title, string connectionstring)
+        private void ConnectToServer(AppDBServerLink connection)
         {
             try
             {
@@ -139,15 +138,15 @@ namespace QueryDesk
                 tabcontent.VerticalAlignment = VerticalAlignment.Stretch;
 
                 // setup the datasource to provide querynames
-                tabcontent.Initialize(AppDB, connection_id);
+                tabcontent.Initialize(AppDB, connection.id);
 
                 // this also connects to the database and will throw an exception when we can't connect
-                tabcontent.setDatabaseConnection(connectionstring);
+                tabcontent.setDatabaseConnection((AppDBServerType)connection.type, connection.getConnectionString());
 
                 // create a new tab with usercontrol instance and stretch align that to the tab
                 var tab = new TabItem();
 
-                var header = new CloseableTabHeader(title);
+                var header = new CloseableTabHeader(connection.name);
                 header.OnClose = () =>
                 {
                     pgTabs.Items.Remove(tab);

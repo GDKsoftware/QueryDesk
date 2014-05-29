@@ -29,7 +29,7 @@ namespace QueryDesk
         public string name { get; set; }
         public string host { get; set; }
         public int port { get; set; }
-        public AppDBServerType type { get; set; }
+        public int type { get; set; }
         public string username { get; set; }
         public string password { get; set; }
         public string databasename { get; set; }
@@ -38,17 +38,17 @@ namespace QueryDesk
         public AppDBDummyServer()
         {
             this.id = 0;
+            this.type = 0;
             this.name = "";
             this.host = "";
             this.port = 0;
-            this.type = AppDBServerType.Void;
             this.username = "";
             this.password = "";
             this.databasename = "";
             this.extraparams = "";
         }
 
-        public AppDBDummyServer(int id, string name, AppDBServerType type, string host, int port, string username, string password, string database, string extraparams = "")
+        public AppDBDummyServer(int id, string name, int type, string host, int port, string username, string password, string database, string extraparams = "")
         {
             this.id = id;
             this.name = name;
@@ -78,7 +78,7 @@ namespace QueryDesk
             this.connectionstring = connectionstring;
 
             lstServers = new List<AppDBDummyServer>();
-            lstServers.Add(new AppDBDummyServer(1, "Testserver 1", AppDBServerType.Void, "localhost", 3306, "root", "1234", "testdb"));
+            lstServers.Add(new AppDBDummyServer(1, "Testserver 1", 1, "localhost", 3306, "root", "1234", "testdb"));
 
             lstQueries = new List<AppDBDummyQuery>();
             lstQueries.Add(new AppDBDummyQuery(1,1,"Test Query 1", "select * from mytable where var1=:var1 and var2=:var2"));
