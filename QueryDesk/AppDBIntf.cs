@@ -80,7 +80,16 @@ namespace QueryDesk
             {
                 Debug.Assert(data != null);
 
-                data.GetType().GetProperty("id").SetValue(data, value);
+                if (data is DataRowView)
+                {
+                    DataRowView row = (DataRowView)data;
+                    row["id"] = value;
+                }
+                else
+                {
+                    data.GetType().GetProperty("id").SetValue(data, value);
+                }
+
                 NotifyPropertyChanged("id");
             }
         }
@@ -104,7 +113,16 @@ namespace QueryDesk
             {
                 Debug.Assert(data != null);
 
-                data.GetType().GetProperty("connection_id").SetValue(data, value);
+                if (data is DataRowView)
+                {
+                    DataRowView row = (DataRowView)data;
+                    row["connection_id"] = value;
+                }
+                else
+                {
+                    data.GetType().GetProperty("connection_id").SetValue(data, value);
+                }
+
                 NotifyPropertyChanged("connection_id");
             }
         }

@@ -55,6 +55,8 @@ namespace QueryDesk
             this.connection_id = server_id;
 
             btnEditQuery.IsEnabled = (AppDB is IAppDBEditableQueries);
+            btnDelQuery.IsEnabled = (AppDB is IAppDBEditableQueries);
+            btnAddQuery.IsEnabled = (AppDB is IAppDBEditableQueries);
 
             var what = Content as Grid;
             what.Margin = new Thickness(0, 0, 0, 0);
@@ -150,6 +152,11 @@ namespace QueryDesk
                 CurrentQuery = null;
                 edSQL.Text = link.sqltext;
             }
+            else
+            {
+                CurrentQuery = null;
+                edSQL.Text = "";
+            }
         }
 
         private void btnGoQuery_Click(object sender, RoutedEventArgs e)
@@ -231,6 +238,27 @@ namespace QueryDesk
                 editable.saveQuery(link);
 
                 Reload();
+            }
+        }
+
+        private void btnDelQuery_Click(object sender, RoutedEventArgs e)
+        {
+            var row = cmbQueries.SelectedItem;
+            if (row != null)
+            {
+                var link = new AppDBQueryLink(row);
+
+                // ask to be sure user hit the right button
+                var r = MessageBox.Show("Are you sure you want to delete this query?", "", MessageBoxButton.YesNo);
+                if (r == MessageBoxResult.Yes)
+                {
+                    // AppDB needs to be editable in order to have saveQuery and delQuery functions,
+                    //  but this button will be disabled if it's not editable, so we can just blindly do a typecast it here
+                    var editable = (IAppDBEditableQueries)AppDB;
+                    editable.delQuery(link);
+
+                    Reload();
+                }
             }
         }
     }
