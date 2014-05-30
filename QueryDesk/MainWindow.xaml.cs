@@ -149,6 +149,7 @@ namespace QueryDesk
                 var header = new CloseableTabHeader(connection.name);
                 header.OnClose = () =>
                 {
+                    // implementation when x button is used on tab
                     pgTabs.Items.Remove(tab);
                 };
                 tab.Header = header;
@@ -156,6 +157,10 @@ namespace QueryDesk
 
                 pgTabs.Items.Add(tab);
                 pgTabs.SelectedIndex = pgTabs.Items.IndexOf(tab);
+
+                // if updatelayout() isn't used, recalculatesize() won't work
+                pgTabs.UpdateLayout();
+                header.RecalculateSize();
             }
             catch (Exception ex)
             {

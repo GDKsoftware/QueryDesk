@@ -20,6 +20,7 @@ namespace QueryDesk
     /// </summary>
     public partial class CloseableTabHeader : UserControl
     {
+        // OnClose delegate, doesn't need specific implementation, Action is good enough
         public Action OnClose;
 
         public CloseableTabHeader(string title)
@@ -27,7 +28,11 @@ namespace QueryDesk
             InitializeComponent();
 
             lblTabTitle.Content = title;
-            this.Width = lblTabTitle.RenderSize.Width + 50;
+        }
+
+        public void RecalculateSize()
+        {
+            this.Width = lblTabTitle.RenderSize.Width + 25;
         }
 
         public void CloseTab()
