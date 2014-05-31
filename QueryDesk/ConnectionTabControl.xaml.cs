@@ -249,7 +249,7 @@ namespace QueryDesk
                 var link = new AppDBQueryLink(row);
 
                 // ask to be sure user hit the right button
-                var r = MessageBox.Show("Are you sure you want to delete this query?", "", MessageBoxButton.YesNo);
+                var r = MessageBox.Show("Are you sure you want to delete this query?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (r == MessageBoxResult.Yes)
                 {
                     // AppDB needs to be editable in order to have saveQuery and delQuery functions,
