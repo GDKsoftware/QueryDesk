@@ -200,11 +200,20 @@ namespace QueryDesk
 
         private void btnDeleteServer_Click(object sender, RoutedEventArgs e)
         {
+            MessageBoxResult confirmationResult;
             var editable = (IAppDBEditableServers)AppDB;
 
-            editable.delServer(CurrentSelectedServerLink);
+            // Ask for confirmation before removing connection
+            confirmationResult = MessageBox.Show("Are you sure you want to remove \"" + CurrentSelectedServerLink.name + "\" ?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
-            RefreshConnectionList();
+            if (confirmationResult == MessageBoxResult.Yes)
+            {
+                // Remove selected connection
+                editable.delServer(CurrentSelectedServerLink);
+
+                // Refresh connection list
+                RefreshConnectionList();
+            }
         }
     }
 }
