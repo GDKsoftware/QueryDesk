@@ -92,22 +92,27 @@ namespace QueryDesk
         {
             string exampleqrystring = null;
 
-            var frm = new QueryParams();
-            frm.SetQuery(qry);
-            bool? b = frm.ShowDialog();
-            if (b == true)
+            // Check for query params
+            if (qry.HasParameters())
             {
-                frm.SaveParamsToQuery();
+                // Display query param window
+                var frm = new QueryParams();
+                frm.SetQuery(qry);
+                bool? b = frm.ShowDialog();
 
-                exampleqrystring = qry.ToString();
-
-                foreach (var param in qry.parameters)
+                if (b == true)
                 {
-                    exampleqrystring = exampleqrystring.Replace("?" + param.Key, "'" + param.Value + "'");
-                    exampleqrystring = exampleqrystring.Replace(":" + param.Key, "'" + param.Value + "'");
+                    frm.SaveParamsToQuery();
+
+                    exampleqrystring = qry.ToString();
+
+                    foreach (var param in qry.parameters)
+                    {
+                        exampleqrystring = exampleqrystring.Replace("?" + param.Key, "'" + param.Value + "'");
+                        exampleqrystring = exampleqrystring.Replace(":" + param.Key, "'" + param.Value + "'");
+                    }
                 }
             }
-
 
 /*
             // old way to enter parameters 1 by 1

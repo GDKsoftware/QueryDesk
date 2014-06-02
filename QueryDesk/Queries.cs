@@ -17,6 +17,11 @@ namespace QueryDesk
             set { sqltext = value; ParseParams(); }
         }
 
+        public Boolean HasParameters()
+        {
+            return parameters.Count > 0;
+        }
+
         protected void ParseParams()
         {
             parameters.Clear();
