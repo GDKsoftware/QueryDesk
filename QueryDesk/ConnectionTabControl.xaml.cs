@@ -113,6 +113,10 @@ namespace QueryDesk
                     }
                 }
             }
+            else
+            {
+                exampleqrystring = qry.ToString();
+            }
 
 /*
             // old way to enter parameters 1 by 1
@@ -225,7 +229,8 @@ namespace QueryDesk
                     var editable = (IAppDBEditableQueries)AppDB;
                     editable.saveQuery(link);
 
-                    edSQL.Text = link.sqltext;
+                    // we don't have to do Reload() here, the object (row) should be edited directly, but we still need to reset CurrentQuery (used by GoQuery button)
+                    cmbQueries_SelectionChanged(cmbQueries, null);
                 }
             }
         }
