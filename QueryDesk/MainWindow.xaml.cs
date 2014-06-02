@@ -44,6 +44,7 @@ namespace QueryDesk
             }
             else
             {
+                // note: other options here http://stackoverflow.com/questions/2820357/how-to-exit-a-wpf-app-programmatically
                 Application.Current.Shutdown();
             }
         }
