@@ -144,3 +144,9 @@ $RECYCLE.BIN/
 # Mac crap
 .DS_Store
 
+#############
+## Other stuff
+#############
+
+# library dlls
+*.dll
