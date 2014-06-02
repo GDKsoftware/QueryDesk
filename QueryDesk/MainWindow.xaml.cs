@@ -37,20 +37,34 @@ namespace QueryDesk
             cbType.DisplayMemberPath = "Value";
             cbType.SelectedValuePath = "Key";
 
-            LoadConnectionSettings();
-
-            RefreshConnectionList();
-
-            EnableDisable();
+            if (LoadConnectionSettings())
+            {
+                RefreshConnectionList();
+                EnableDisable();
+            }
+            else
+            {
+                Application.Current.Shutdown();
+            }
         }
 
-        public void LoadConnectionSettings()
+        public bool LoadConnectionSettings()
         {
             string connstr = (string)ConfigurationManager.AppSettings["connection"];
 
             // connect to database through connection string set in the App.config
-            AppDB = new AppDBMySQL(connstr);
-            //AppDB = new AppDBDummy(connstr);
+            try
+            {
+                AppDB = new AppDBMySQL(connstr);
+                //AppDB = new AppDBDummy(connstr);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return false;
+            }
+
+            return true;
         }
 
         private void lstConnections_MouseDoubleClick(object sender, MouseButtonEventArgs e)
