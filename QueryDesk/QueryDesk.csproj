@@ -36,16 +36,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mysql.data">
-      <HintPath>.\mysql.data.dll</HintPath>
+      <HintPath>lib\mysql.data.dll</HintPath>
     </Reference>
     <Reference Include="mysql.data.entity.EF5">
-      <HintPath>.\mysql.data.entity.EF5.dll</HintPath>
+      <HintPath>lib\mysql.data.entity.EF5.dll</HintPath>
     </Reference>
     <Reference Include="mysql.data.entity.EF6">
-      <HintPath>.\mysql.data.entity.EF6.dll</HintPath>
+      <HintPath>lib\mysql.data.entity.EF6.dll</HintPath>
     </Reference>
     <Reference Include="mysql.web">
-      <HintPath>.\mysql.web.dll</HintPath>
+      <HintPath>lib\mysql.web.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
