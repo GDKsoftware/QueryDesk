@@ -20,7 +20,7 @@ namespace QueryDesk
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, IDisposable
     {
         private IAppDBServersAndQueries AppDB = null;
         private AppDBServerLink CurrentSelectedServerLink = new AppDBServerLink(new AppDBDummyServer());
@@ -214,6 +214,11 @@ namespace QueryDesk
                 // Refresh connection list
                 RefreshConnectionList();
             }
+        }
+
+        public void Dispose()
+        {
+            
         }
     }
 }

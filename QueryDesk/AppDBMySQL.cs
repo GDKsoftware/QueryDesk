@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace QueryDesk
 {
-    class AppDBMySQL: IAppDBServersAndQueries, IAppDBEditableServers, IAppDBEditableQueries
+    class AppDBMySQL: IAppDBServersAndQueries, IAppDBEditableServers, IAppDBEditableQueries, IDisposable
     {
         private string connectionstring;
         private MySqlConnection DB;
@@ -187,6 +187,11 @@ namespace QueryDesk
             {
                 // ???
             }
+        }
+
+        public void Dispose()
+        {
+            DB.Dispose();
         }
     }
 }

@@ -18,7 +18,7 @@ namespace QueryDesk
         DataTable ResultsAsDataTable();
     }
 
-    class MySQLQueryableConnection: IQueryableConnection
+    class MySQLQueryableConnection: IQueryableConnection, IDisposable
     {
         private MySqlConnection DB = null;
         private String ConnectionString = "";
@@ -81,9 +81,15 @@ namespace QueryDesk
 
             return ds.Tables["query"];
         }
+
+        public void Dispose()
+        {
+            DB.Dispose();
+            CurrentCmd.Dispose();
+        }
     }
 
-    class MSSQLQueryableConnection : IQueryableConnection
+    class MSSQLQueryableConnection : IQueryableConnection, IDisposable
     {
         private SqlConnection DB = null;
         private string ConnectionString = "";
@@ -134,6 +140,12 @@ namespace QueryDesk
             }
 
             return ds.Tables["query"];
+        }
+
+        public void Dispose()
+        {
+            DB.Dispose();
+            CurrentCmd.Dispose();
         }
     }
 
