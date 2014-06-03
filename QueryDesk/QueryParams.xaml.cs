@@ -35,6 +35,7 @@ namespace QueryDesk
         protected void InitParams()
         {
             bool focusSet = false;
+            int currentRow = 0;
 
             foreach (var param in CurrentQuery.parameters)
             {
@@ -42,6 +43,7 @@ namespace QueryDesk
                 lbl.Margin = new Thickness(0,0,0,0);
                 lbl.Content = param.Key;
                 TextBox ed = new TextBox();
+                RowDefinition rowDef = new RowDefinition();
 
                 // note: can't bind, param.Value is read-only, need to set values by doing CurrentQuery.parameters["keyname"] = "new value";
                 //ed.DataContext = param;
@@ -58,17 +60,29 @@ namespace QueryDesk
 
                 ParamBoxes.Add(param.Key, ed);
 
-                gridParams.RowDefinitions.Add(new RowDefinition());
+                // Set textbox height
+                ed.Height = 23;
 
-                Grid.SetRow(lbl, 0);
-                Grid.SetRowSpan(lbl, 1);
+                // Add row definition with textbox height
+                rowDef.Height = new GridLength(ed.Height, GridUnitType.Pixel);
+                gridParams.RowDefinitions.Add(rowDef);
+
+                // Assign label to grid
+                Grid.SetRow(lbl, currentRow);
+                Grid.SetRowSpan(lbl, 2);
                 Grid.SetColumn(lbl, 0);
-                Grid.SetRow(ed, 0);
+
+                // Assign edit box to grid
+                Grid.SetRow(ed, currentRow);
                 Grid.SetRowSpan(ed, 1);
                 Grid.SetColumn(ed, 1);
 
+                // Add elements to grid
                 gridParams.Children.Add(lbl);
                 gridParams.Children.Add(ed);
+
+                // Increase row number
+                currentRow++;
 
                 if (!focusSet)
                 {
