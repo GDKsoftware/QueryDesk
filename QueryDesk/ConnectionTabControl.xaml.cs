@@ -182,6 +182,33 @@ namespace QueryDesk
 
                 edSQL.Text = AskForParameters(CurrentQuery);
 
+
+                CExplainableQuery expl = QueryExplanationFactory.newExplain(DBConnection, CurrentQuery);
+                if (expl != null)
+                {
+                    if (!expl.isAllIndexed())
+                    {
+                        if (MessageBox.Show("This query does not fully make use of indexes, are you sure you want to execute this query?", "Query warning", MessageBoxButton.YesNo) == MessageBoxResult.No)
+                        {
+                            return;
+                        }
+                    }
+                    else if (expl.isUsingBadStuff())
+                    {
+                        if (MessageBox.Show("This query could take a long time to run, are you sure you want to execute this query?", "Query warning", MessageBoxButton.YesNo) == MessageBoxResult.No)
+                        {
+                            return;
+                        }
+                    }
+                    else if (expl.getMaxResults() >= 65535)
+                    {
+                        if (MessageBox.Show("This query could possibly return a lot of rows, are you sure you want to execute this query?", "Query warning", MessageBoxButton.YesNo) == MessageBoxResult.No)
+                        {
+                            return;
+                        }
+                    }
+                }
+
                 // execute query and get result set
 
                 DBConnection.Query(CurrentQuery);

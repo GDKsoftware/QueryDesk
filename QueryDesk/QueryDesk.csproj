@@ -91,6 +91,8 @@
       <DependentUpon>CloseableTabHeader.xaml</DependentUpon>
     </Compile>
     <Compile Include="ConnectionFactory.cs" />
+    <Compile Include="QueryComposerHelper.cs" />
+    <Compile Include="QueryExplain.cs" />
     <Compile Include="Queries.cs" />
     <Compile Include="ConnectionTabControl.xaml.cs">
       <DependentUpon>ConnectionTabControl.xaml</DependentUpon>

@@ -22,12 +22,35 @@ namespace QueryDesk
             return parameters.Count > 0;
         }
 
+        /// <summary>
+        /// Inserts string s into list sorted by descending stringlength
+        /// </summary>
+        /// <param name="lst">list to put string s into</param>
+        /// <param name="s">string</param>
+        public static void AddLenSorted(List<string> lst, string s)
+        {
+            for (int i = 0; i < lst.Count; i++)
+            {
+                var p = lst[i];
+
+                if (s.Length > p.Length)
+                {
+                    lst.Insert(i, s);
+                    return;
+                }
+            }
+
+            lst.Add(s);
+        }
+
         protected void ParseParams()
         {
             parameters.Clear();
 
             var inparam = false;
             var paramname = "";
+
+            List<string> lstParams = new List<string>();
 
             var i = 0;
             var c = sqltext.Length;
@@ -46,7 +69,7 @@ namespace QueryDesk
                 else if (inparam)
                 {
                     // some other char, probably ending the parameter name
-                    parameters.Add(paramname, null);
+                    AddLenSorted(lstParams, paramname);
                     inparam = false;
                     paramname = "";
 
@@ -60,16 +83,36 @@ namespace QueryDesk
             // if we're on the end of string and we haven't stored the last paramname yet
             if (inparam && (paramname != ""))
             {
-                parameters.Add(paramname, null);
+                AddLenSorted(lstParams, paramname);
 
                 // hack/fix parameter notation
                 sqltext = sqltext.Replace(':' + paramname, '?' + paramname);
+            }
+
+            // add parameters sorted to dictionary
+            foreach (var p in lstParams)
+            {
+                parameters.Add(p, null);
             }
         }
 
         public StoredQuery(string sql)
         {
             this.SQL = sql;
+        }
+
+        public StoredQuery(StoredQuery qry)
+        {
+            this.SQL = qry.SQL;
+            CopyParamsFrom(qry);
+        }
+
+        public void CopyParamsFrom(StoredQuery qry)
+        {
+            foreach (var p in qry.parameters)
+            {
+                this.parameters[p.Key] = p.Value;
+            }
         }
 
         public override string ToString()

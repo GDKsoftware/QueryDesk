@@ -16,9 +16,13 @@ namespace QueryDesk
 
         bool Query(StoredQuery qry);
         DataTable ResultsAsDataTable();
+        void CloseQuery();
+
+        List<string> ListTableNames();
+        List<string> ListFieldNames(string tablename);
     }
 
-    class MySQLQueryableConnection: IQueryableConnection, IDisposable
+    public class MySQLQueryableConnection: IQueryableConnection, IDisposable
     {
         private MySqlConnection DB = null;
         private String ConnectionString = "";
@@ -82,14 +86,71 @@ namespace QueryDesk
             return ds.Tables["query"];
         }
 
+        public void CloseQuery()
+        {
+            if (CurrentCmd != null)
+            {
+                CurrentCmd.Dispose();
+                CurrentCmd = null;
+            }
+        }
+
         public void Dispose()
         {
             DB.Dispose();
-            CurrentCmd.Dispose();
+            if (CurrentCmd != null)
+            {
+                CurrentCmd.Dispose();
+            }
+        }
+
+
+        public List<string> ListTableNames()
+        {
+            var tblqry = new StoredQuery("SHOW TABLES;");
+            if (Query(tblqry))
+            {
+                var dt = ResultsAsDataTable();
+                if (dt != null)
+                {
+                    var lst = new List<string>();
+                    foreach (var row in dt.AsEnumerable())
+                    {
+                        lst.Add(row.Field<string>(0));
+                    }
+                    return lst;
+                }
+
+                CloseQuery();
+            }
+
+            return null;
+        }
+
+        public List<string> ListFieldNames(string tablename)
+        {
+            var tblqry = new StoredQuery("DESC `" + tablename + "`;");
+            if (Query(tblqry))
+            {
+                var dt = ResultsAsDataTable();
+                if (dt != null)
+                {
+                    var lst = new List<string>();
+                    foreach (var row in dt.AsEnumerable())
+                    {
+                        lst.Add(row.Field<string>(0));
+                    }
+                    return lst;
+                }
+
+                CloseQuery();
+            }
+
+            return null;
         }
     }
 
-    class MSSQLQueryableConnection : IQueryableConnection, IDisposable
+    public class MSSQLQueryableConnection : IQueryableConnection, IDisposable
     {
         private SqlConnection DB = null;
         private string ConnectionString = "";
@@ -124,6 +185,15 @@ namespace QueryDesk
             return true;
         }
 
+        public void CloseQuery()
+        {
+            if (CurrentCmd != null)
+            {
+                CurrentCmd.Dispose();
+                CurrentCmd = null;
+            }
+        }
+
         public DataTable ResultsAsDataTable()
         {
             SqlDataAdapter adapter = new SqlDataAdapter();
@@ -146,6 +216,53 @@ namespace QueryDesk
         {
             DB.Dispose();
             CurrentCmd.Dispose();
+        }
+
+
+        public List<string> ListTableNames()
+        {
+            var tblqry = new StoredQuery("SELECT TABLE_NAME FROM information_schema.tables;");
+            if (Query(tblqry))
+            {
+                var dt = ResultsAsDataTable();
+                if (dt != null)
+                {
+                    var lst = new List<string>();
+                    foreach (var row in dt.AsEnumerable())
+                    {
+                        lst.Add(row.Field<string>(0));
+                    }
+                    return lst;
+                }
+
+                CloseQuery();
+            }
+
+            return null;
+        }
+
+        public List<string> ListFieldNames(string tablename)
+        {
+            var tblqry = new StoredQuery("SELECT COLUMN_NAME" +
+                " FROM INFORMATION_SCHEMA.COLUMNS" +
+                " WHERE TABLE_NAME = 'locationdevices';");
+            if (Query(tblqry))
+            {
+                var dt = ResultsAsDataTable();
+                if (dt != null)
+                {
+                    var lst = new List<string>();
+                    foreach (var row in dt.AsEnumerable())
+                    {
+                        lst.Add(row.Field<string>(0));
+                    }
+                    return lst;
+                }
+
+                CloseQuery();
+            }
+
+            return null;
         }
     }
 
