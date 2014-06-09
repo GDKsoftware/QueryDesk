@@ -31,13 +31,15 @@ namespace QueryDesk
     {
         public static CExplainableQuery newExplain(IQueryableConnection connection, StoredQuery query)
         {
-            if (connection is MySQLQueryableConnection)
-            {
-                return new MySQLQueryExplanation(connection, query);
-            }
-            else if (connection is MSSQLQueryableConnection)
-            {
-                return null; // new MSSQLQueryExplanation(connection, query);
+            if (query.SQL.StartsWith("select", StringComparison.OrdinalIgnoreCase)) {
+                if (connection is MySQLQueryableConnection)
+                {
+                    return new MySQLQueryExplanation(connection, query);
+                }
+                else if (connection is MSSQLQueryableConnection)
+                {
+                    return null; // new MSSQLQueryExplanation(connection, query);
+                }
             }
 
             return null;
