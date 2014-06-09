@@ -88,35 +88,39 @@ namespace QueryDesk
             }
         }
 
-        private string AskForParameters(StoredQuery qry)
+        private string ProcessParameters(StoredQuery qry)
         {
-            string exampleqrystring = null;
+            string exampleqrystring = qry.ToString();
 
+            // Loop through query parameters
+            foreach (var param in qry.parameters)
+            {
+                // Replace defined parameter placeholder with given values
+                exampleqrystring = exampleqrystring.Replace("?" + param.Key, "'" + param.Value + "'");
+                exampleqrystring = exampleqrystring.Replace(":" + param.Key, "'" + param.Value + "'");
+            }
+
+            // Return parsed query
+            return exampleqrystring;
+        }
+
+        private bool AskForParameters(StoredQuery qry)
+        {
             // Check for query params
             if (qry.HasParameters())
             {
                 // Display query param window
                 var frm = new QueryParams();
                 frm.SetQuery(qry);
-                bool? b = frm.ShowDialog();
 
-                if (b == true)
+                if (frm.ShowDialog() == true)
                 {
                     frm.SaveParamsToQuery();
-
-                    exampleqrystring = qry.ToString();
-
-                    foreach (var param in qry.parameters)
-                    {
-                        exampleqrystring = exampleqrystring.Replace("?" + param.Key, "'" + param.Value + "'");
-                        exampleqrystring = exampleqrystring.Replace(":" + param.Key, "'" + param.Value + "'");
-                    }
+                    return true;
                 }
             }
-            else
-            {
-                exampleqrystring = qry.ToString();
-            }
+
+            return false;
 
 /*
             // old way to enter parameters 1 by 1
@@ -148,8 +152,6 @@ namespace QueryDesk
                 exampleqrystring = exampleqrystring.Replace(":" + key, "'" + answer + "'");
             }
 */
-
-            return exampleqrystring;
         }
 
         private void cmbQueries_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -180,8 +182,15 @@ namespace QueryDesk
                     CurrentQuery = new StoredQuery(link.sqltext);
                 }
 
-                edSQL.Text = AskForParameters(CurrentQuery);
+                // Aks for query parameters and save them
+                if (!AskForParameters(CurrentQuery))
+                {
+                    // Return if parameter input was canceled
+                    return;
+                }
 
+                // Processs query parameters
+                edSQL.Text = ProcessParameters(CurrentQuery);
 
                 CExplainableQuery expl = QueryExplanationFactory.newExplain(DBConnection, CurrentQuery);
                 if (expl != null)
