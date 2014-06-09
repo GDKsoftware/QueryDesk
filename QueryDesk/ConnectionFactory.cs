@@ -31,6 +31,8 @@ namespace QueryDesk
         public MySQLQueryableConnection(string connectionstr)
         {
             ConnectionString = connectionstr;
+
+            ConnectionString = ConnectionString + ";Allow Zero Datetime=True";
         }
 
         public bool Connect()
