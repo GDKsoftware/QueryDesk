@@ -45,7 +45,7 @@ namespace QueryDesk
             CurrentQuery.sqltext = edSQL.Text;
         }
 
-        private void btnOk_Click(object sender, RoutedEventArgs e)
+        private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             Save();
 
