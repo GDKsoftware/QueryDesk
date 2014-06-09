@@ -197,21 +197,21 @@ namespace QueryDesk
                 {
                     if (!expl.isAllIndexed())
                     {
-                        if (MessageBox.Show("This query does not fully make use of indexes, are you sure you want to execute this query?", "Query warning", MessageBoxButton.YesNo) == MessageBoxResult.No)
+                        if (MessageBox.Show("This query does not fully make use of indexes, are you sure you want to execute this query?", "Query warning", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                         {
                             return;
                         }
                     }
                     else if (expl.isUsingBadStuff())
                     {
-                        if (MessageBox.Show("This query could take a long time to run, are you sure you want to execute this query?", "Query warning", MessageBoxButton.YesNo) == MessageBoxResult.No)
+                        if (MessageBox.Show("This query could take a long time to run, are you sure you want to execute this query?", "Query warning", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                         {
                             return;
                         }
                     }
                     else if (expl.getMaxResults() >= 65535)
                     {
-                        if (MessageBox.Show("This query could possibly return a lot of rows, are you sure you want to execute this query?", "Query warning", MessageBoxButton.YesNo) == MessageBoxResult.No)
+                        if (MessageBox.Show("This query could possibly return a lot of rows, are you sure you want to execute this query?", "Query warning", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                         {
                             return;
                         }
