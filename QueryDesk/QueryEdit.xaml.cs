@@ -11,6 +11,10 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Xml;
+using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using System.Reflection;
 
 namespace QueryDesk
 {
@@ -24,6 +28,9 @@ namespace QueryDesk
         public frmQueryEdit()
         {
             InitializeComponent();
+
+            // Apply the SQL syntax highlighting definition
+            edSQL.SyntaxHighlighting = HighlightingLoader.Load(XmlReader.Create(Assembly.GetExecutingAssembly().GetManifestResourceStream("QueryDesk.Resources.SQL.xshd")), HighlightingManager.Instance);
         }
 
         public void Initialize(AppDBQueryLink linkQueryRow)
