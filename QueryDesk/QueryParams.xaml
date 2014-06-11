@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit" x:Class="QueryDesk.QueryParams"
         Title="QueryParams" Height="389" Width="616" WindowStartupLocation="CenterScreen">
-    <Grid> 
-        <avalonedit:TextEditor x:Name="edQueryDescription" FontFamily="Consolas" FontSize="12" Text="[query description]" Margin="10,10,10,250" WordWrap="True" UseLayoutRounding="False" IsReadOnly="True"/>
+    <Grid>
+        <avalonedit:TextEditor x:Name="edQueryDescription" FontFamily="Consolas" FontSize="12" Text="[query description]" Margin="10,10,10,0" WordWrap="True" UseLayoutRounding="False" IsReadOnly="True" VerticalAlignment="Top" Height="100"/>
         <ScrollViewer x:Name="scrollParams" Margin="10,115,10,34">
             <Grid x:Name="gridParams" Margin="10,10,10,0">
                 <Grid.ColumnDefinitions>
