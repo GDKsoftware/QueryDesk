@@ -1,17 +1,64 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using ICSharpCode.AvalonEdit.CodeCompletion;
+using ICSharpCode.AvalonEdit.Editing;
+using System.Windows;
 
 namespace QueryDesk
 {
+    public class QueryComposerCompletionData: ICompletionData
+    {
+        protected string stringval;
+        protected string type;
+
+        public QueryComposerCompletionData(string type, string strval)
+        {
+            this.type = type;
+            this.stringval = strval;
+        }
+
+        public void Complete(ICSharpCode.AvalonEdit.Editing.TextArea textArea, ICSharpCode.AvalonEdit.Document.ISegment completionSegment, EventArgs insertionRequestEventArgs)
+        {
+            textArea.Document.Replace(completionSegment, this.Text);
+        }
+
+        public object Content
+        {
+            get { return stringval; }
+        }
+
+        public object Description
+        {
+            get { return null; }
+        }
+
+        public System.Windows.Media.ImageSource Image
+        {
+            get { return null; }
+        }
+
+        public double Priority
+        {
+            get { return 0; }
+        }
+
+        public string Text
+        {
+            get { return stringval; }
+        }
+    }
+
     public class QueryComposerHelper
     {
-        protected MySQLQueryableConnection DBConnection = null;
+        protected IQueryableConnection DBConnection = null;
         protected Dictionary<string, List<string>> DBLayout = null;
 
-        public QueryComposerHelper(MySQLQueryableConnection connection)
+        public QueryComposerHelper(IQueryableConnection connection)
         {
             DBConnection = connection;
 
@@ -29,6 +76,74 @@ namespace QueryDesk
             }
         }
 
-        //public List<string> SenseAt(int row, int col, )
+        /// <summary>
+        /// Look for a word in s before character index pos
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="pos"></param>
+        /// <returns></returns>
+        protected string ExtractPreviousWord(string s, int pos)
+        {
+            string w = "";
+            int p = pos;
+            while (p >= 0)
+            {
+                var c = s[p];
+                // word separators; space, dot, comma, tab, enter
+                if ((c == ' ') || (c == '.') || (c == ',') || (c == 7) || (c == 10) || (c == 13))
+                {
+                    return w;
+                }
+                else
+                {
+                    w = c + w;
+                }
+                p--;
+            }
+
+            return "";
+        }
+
+        /// <summary>
+        /// Add a list of completion options to data, based on current cursor position in textarea
+        /// </summary>
+        /// <param name="e">Textarea (AvalonEdit only) and cursor information</param>
+        /// <param name="data"></param>
+        public void Initialize(TextCompositionEventArgs e, IList<ICompletionData> data)
+        {
+            //e.Source
+            var textarea = (TextArea)(((RoutedEventArgs)(e)).Source);
+            var caret = textarea.Caret;
+            var line = caret.Location.Line;
+            var col = caret.Location.Column;
+
+            string word = "";
+
+            // if the character on/before the current cursor position is a dot, extract the word that's in front of it (likely a tablename)
+            if (textarea.Document.Text[textarea.Document.Lines[line - 1].Offset + col - 2] == '.')
+            {
+                word = ExtractPreviousWord(textarea.Document.Text, textarea.Document.Lines[line - 1].Offset + col - 3);
+            }
+
+            foreach (var tablename in DBLayout.Keys)
+            {
+                // todo: should also list fieldnames of the table that's being selected ('from ...', 'into ...', 'update ...')
+
+                if (word == "")
+                {
+                    // no words; list all tables
+                    data.Add(new QueryComposerCompletionData("table", tablename));
+                }
+                else if (word.Equals(tablename,StringComparison.OrdinalIgnoreCase))
+                {
+                    // word matches a tablename; list all fields in this table
+                    foreach (var fieldname in DBLayout[tablename])
+                    {
+                        data.Add(new QueryComposerCompletionData("field", fieldname));
+                    }
+                    break;
+                }
+            }
+        }
     }
 }

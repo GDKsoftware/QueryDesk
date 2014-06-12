@@ -248,7 +248,7 @@ namespace QueryDesk
                 var link = new AppDBQueryLink(row);
 
                 var frm = new frmQueryEdit();
-                frm.Initialize(link);
+                frm.Initialize(link, DBConnection);
 
                 bool? b = frm.ShowDialog();
                 if (b == true)
@@ -266,7 +266,7 @@ namespace QueryDesk
         {
             var link = new AppDBQueryLink(new AppDBDummyQuery(0, connection_id, "New Query", ""));
             var frm = new frmQueryEdit();
-            frm.Initialize(link);
+            frm.Initialize(link, DBConnection);
 
             bool? b = frm.ShowDialog();
             if (b == true)
