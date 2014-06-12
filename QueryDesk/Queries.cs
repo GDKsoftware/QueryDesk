@@ -57,7 +57,7 @@ namespace QueryDesk
             while (i < c)
             {
                 // start of parameter with : or ?
-                if ((sqltext[i] == ':') || (sqltext[i] == '?'))
+                if ((sqltext[i] == ':') || (sqltext[i] == '?') || (sqltext[i] == '@'))
                 {
                     inparam = true;
                 }
@@ -72,9 +72,6 @@ namespace QueryDesk
                     AddLenSorted(lstParams, paramname);
                     inparam = false;
                     paramname = "";
-
-                    // hack/fix parameter notation
-                    sqltext = sqltext.Replace(':' + paramname, '?' + paramname);
                 }
 
                 i++;
@@ -84,15 +81,26 @@ namespace QueryDesk
             if (inparam && (paramname != ""))
             {
                 AddLenSorted(lstParams, paramname);
-
-                // hack/fix parameter notation
-                sqltext = sqltext.Replace(':' + paramname, '?' + paramname);
             }
 
             // add parameters sorted to dictionary
             foreach (var p in lstParams)
             {
                 parameters.Add(p, null);
+            }
+        }
+
+        /// <summary>
+        /// Generalize parameters prefixes to given character (mysql '?', mssql '@')
+        /// </summary>
+        /// <param name="rewriteparamprefixchar">char</param>
+        public void RewriteParameters(char rewriteparamprefixchar)
+        {
+            foreach (var paramname in parameters.Keys)
+            {
+                sqltext = sqltext.Replace(':' + paramname, rewriteparamprefixchar + paramname);
+                sqltext = sqltext.Replace('?' + paramname, rewriteparamprefixchar + paramname);
+                sqltext = sqltext.Replace('@' + paramname, rewriteparamprefixchar + paramname);
             }
         }
 

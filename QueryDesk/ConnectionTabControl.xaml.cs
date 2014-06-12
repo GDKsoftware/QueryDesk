@@ -105,6 +105,7 @@ namespace QueryDesk
                 // Replace defined parameter placeholder with given values
                 exampleqrystring = exampleqrystring.Replace("?" + param.Key, "'" + param.Value + "'");
                 exampleqrystring = exampleqrystring.Replace(":" + param.Key, "'" + param.Value + "'");
+                exampleqrystring = exampleqrystring.Replace("@" + param.Key, "'" + param.Value + "'");
             }
 
             // Return parsed query
@@ -133,37 +134,6 @@ namespace QueryDesk
             }
 
             return false;
-
-/*
-            // old way to enter parameters 1 by 1
-
-            // note: can't foreach this, because we edit the values inside this loop
-            for (int i = 0; i < qry.parameters.Count; i++)
-            {
-                var key = qry.parameters.Keys.ElementAt<string>(i);
-                //var value = qry.parameters[key];
-
-                var answer = "";
-
-                // todo: put all parameters together with a dynamically setup form
-
-                // for now ask for parameter values 1 by 1
-                var askparam = new QuickQuestionWindow();
-                askparam.Question = key + " ?";
-
-                bool? b = askparam.ShowDialog();    // ok button lets this 'ShowModal' returns true
-                if (b == true)
-                {
-                    answer = askparam.Answer();
-                }
-
-                qry.parameters[key] = answer;
-
-                // replace stuff directly in the query as an example sql text
-                exampleqrystring = exampleqrystring.Replace("?" + key, "'" + answer + "'");
-                exampleqrystring = exampleqrystring.Replace(":" + key, "'" + answer + "'");
-            }
-*/
         }
 
         private void cmbQueries_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -200,6 +170,8 @@ namespace QueryDesk
                     // Return if parameter input was canceled
                     return;
                 }
+
+                CurrentQuery.RewriteParameters(DBConnection.GetParamPrefixChar());
 
                 // Processs query parameters
                 edSQL.Text = ProcessParameters(CurrentQuery);

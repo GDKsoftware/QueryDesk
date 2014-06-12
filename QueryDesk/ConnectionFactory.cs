@@ -20,6 +20,8 @@ namespace QueryDesk
 
         List<string> ListTableNames();
         List<string> ListFieldNames(string tablename);
+
+        char GetParamPrefixChar();
     }
 
     public class MySQLQueryableConnection: IQueryableConnection, IDisposable
@@ -150,6 +152,11 @@ namespace QueryDesk
 
             return null;
         }
+
+        public char GetParamPrefixChar()
+        {
+            return '?';
+        }
     }
 
     public class MSSQLQueryableConnection : IQueryableConnection, IDisposable
@@ -265,6 +272,11 @@ namespace QueryDesk
             }
 
             return null;
+        }
+
+        public char GetParamPrefixChar()
+        {
+            return '@';
         }
     }
 
