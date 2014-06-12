@@ -47,7 +47,7 @@ namespace QueryDesk
             foreach (var param in CurrentQuery.parameters)
             {
                 Label lbl = new Label();
-                lbl.Margin = new Thickness(0,0,0,0);
+                lbl.Margin = new Thickness(0,-3,0,0);
                 lbl.Content = param.Key;
                 TextBox ed = new TextBox();
                 RowDefinition rowDef = new RowDefinition();
