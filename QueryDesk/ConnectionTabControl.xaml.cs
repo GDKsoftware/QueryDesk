@@ -126,6 +126,11 @@ namespace QueryDesk
                     return true;
                 }
             }
+            else
+            {
+                // if there are no parameters, that's OK
+                return true;
+            }
 
             return false;
 
