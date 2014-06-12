@@ -176,6 +176,8 @@ namespace QueryDesk
                 // Processs query parameters
                 edSQL.Text = ProcessParameters(CurrentQuery);
 
+                barQuery.Items.Clear();
+
                 CExplainableQuery expl = QueryExplanationFactory.newExplain(DBConnection, CurrentQuery);
                 if (expl != null)
                 {
@@ -225,10 +227,15 @@ namespace QueryDesk
                 if (dt != null)
                 {
                     gridQueryResults.ItemsSource = dt.DefaultView;
+
+                    string s = "Results: " + dt.Rows.Count;
+                    barQuery.Items.Add(s);
                 }
                 else
                 {
                     gridQueryResults.ItemsSource = null;
+                    string s = "No results";
+                    barQuery.Items.Add(s);
                 }
             }
         }

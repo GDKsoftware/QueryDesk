@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit" x:Class="QueryDesk.ConnectionTabControl" 
-             mc:Ignorable="d" Width="604" Height="289">
+             mc:Ignorable="d" Width="739" Height="400">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -13,9 +13,10 @@
         <ComboBox x:Name="cmbQueries" VerticalAlignment="Top" Margin="72,13,226,0" SelectionChanged="cmbQueries_SelectionChanged"/>
         <Button x:Name="btnGoQuery" Content="Go" HorizontalAlignment="Right" Margin="0,14,146,0" VerticalAlignment="Top" Width="75" Click="btnGoQuery_Click" ToolTip="Execute query"/>
         <avalonedit:TextEditor x:Name="edSQL" FontFamily="Consolas" FontSize="12" Margin="10,39,10,0" UseLayoutRounding="False" Text="..." WordWrap="True" Height="23" VerticalAlignment="Top" IsReadOnly="True"/>
-        <DataGrid x:Name="gridQueryResults" HorizontalAlignment="Stretch" Margin="10,67,10,10" CanUserResizeRows="False" IsReadOnly="True" />
+        <DataGrid x:Name="gridQueryResults" HorizontalAlignment="Stretch" Margin="10,67,10,27" CanUserResizeRows="False" IsReadOnly="True" />
         <Button x:Name="btnEditQuery" Content="Edit" HorizontalAlignment="Right" Margin="0,14,66,0" VerticalAlignment="Top" Width="75" Click="btnEditQuery_Click" ToolTip="Edit query"/>
         <Button x:Name="btnAddQuery" Content="+" HorizontalAlignment="Right" Height="20" Margin="0,14,38,0" VerticalAlignment="Top" Width="23" Click="btnAddQuery_Click" ToolTip="Add new query"/>
         <Button x:Name="btnDelQuery" Content="-" HorizontalAlignment="Right" Height="20" Margin="0,14,10,0" VerticalAlignment="Top" Width="23" ToolTip="Remove query" Click="btnDelQuery_Click"/>
+        <StatusBar x:Name="barQuery" HorizontalAlignment="Stretch" Height="22" VerticalAlignment="Bottom" Background="{x:Null}"/>
     </Grid>
 </UserControl>
