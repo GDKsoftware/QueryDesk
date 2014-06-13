@@ -104,6 +104,53 @@ namespace QueryDesk
             return "";
         }
 
+        protected string ExtractNextWord(string s, int pos)
+        {
+            string w = "";
+            int p = pos;
+            while (p < s.Length)
+            {
+                var c = s[p];
+                // word separators; space, dot, comma, tab, enter
+                if ((c == ' ') || (c == '.') || (c == ',') || (c == 7) || (c == 10) || (c == 13))
+                {
+                    if (w.Trim() != "")
+                    {
+                        return w;
+                    }
+                }
+                else
+                {
+                    w = w + c;
+                }
+                p++;
+            }
+
+            return "";
+        }
+
+        protected string DetectSQLTableInQuery(string s)
+        {
+            var iFrom   = s.IndexOf("from", StringComparison.OrdinalIgnoreCase);
+            var iInto   = s.IndexOf("into", StringComparison.OrdinalIgnoreCase);
+            var iUpdate = s.IndexOf("update", StringComparison.OrdinalIgnoreCase);
+
+            if (iFrom != -1)
+            {
+                return ExtractNextWord(s, iFrom + 4);
+            }
+            else if (iInto != -1)
+            {
+                return ExtractNextWord(s, iInto + 4);
+            }
+            else if (iUpdate != -1)
+            {
+                return ExtractNextWord(s, iUpdate + 6);
+            }
+
+            return "";
+        }
+
         /// <summary>
         /// Add a list of completion options to data, based on current cursor position in textarea
         /// </summary>
@@ -124,11 +171,13 @@ namespace QueryDesk
             {
                 word = ExtractPreviousWord(textarea.Document.Text, textarea.Document.Lines[line - 1].Offset + col - 3);
             }
+            else
+            {
+                word = DetectSQLTableInQuery(textarea.Document.Text);
+            }
 
             foreach (var tablename in DBLayout.Keys)
             {
-                // todo: should also list fieldnames of the table that's being selected ('from ...', 'into ...', 'update ...')
-
                 if (word == "")
                 {
                     // no words; list all tables
