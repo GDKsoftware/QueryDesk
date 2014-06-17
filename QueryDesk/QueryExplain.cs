@@ -11,6 +11,7 @@ namespace QueryDesk
     {
         protected IQueryableConnection Connection;
         protected StoredQuery Query;
+        protected StoredQuery ExplainQuery;
 
         public CExplainableQuery(IQueryableConnection connection, StoredQuery query)
         {
@@ -25,6 +26,11 @@ namespace QueryDesk
         public abstract ulong getMaxResults();
         public abstract bool isAllIndexed();
         public abstract bool isUsingBadStuff();
+
+        public StoredQuery _get()
+        {
+            return ExplainQuery;
+        }
     }
 
     public class QueryExplanationFactory
@@ -58,10 +64,10 @@ namespace QueryDesk
         {
             string sql = "EXPLAIN " + Query.SQL;
 
-            StoredQuery explainquery = new StoredQuery(sql);
-            explainquery.CopyParamsFrom(Query);
+            ExplainQuery = new StoredQuery(sql);
+            ExplainQuery.CopyParamsFrom(Query);
 
-            if (Connection.Query(explainquery))
+            if (Connection.Query(ExplainQuery))
             {
                 Results = Connection.ResultsAsDataTable();
                 Connection.CloseQuery();

@@ -178,6 +178,8 @@ namespace QueryDesk
 
                 barQuery.Items.Clear();
 
+                var hyjackquery = false;
+
                 CExplainableQuery expl = QueryExplanationFactory.newExplain(DBConnection, CurrentQuery);
                 if (expl != null)
                 {
@@ -185,28 +187,37 @@ namespace QueryDesk
                     {
                         if (MessageBox.Show("This query does not fully make use of indexes, are you sure you want to execute this query?", "Query warning", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                         {
-                            return;
+                            hyjackquery = true;
                         }
                     }
                     else if (expl.isUsingBadStuff())
                     {
                         if (MessageBox.Show("This query could take a long time to run, are you sure you want to execute this query?", "Query warning", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                         {
-                            return;
+                            hyjackquery = true;
                         }
                     }
                     else if (expl.getMaxResults() >= 65535)
                     {
                         if (MessageBox.Show("This query could possibly return a lot of rows, are you sure you want to execute this query?", "Query warning", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                         {
-                            return;
+                            hyjackquery = true;
                         }
                     }
                 }
 
-                // execute query and get result set
+                if (hyjackquery)
+                {
+                    // execute the explain instead (only works for mysql queries)
+                    var qryExplain = expl._get();
 
-                DBConnection.Query(CurrentQuery);
+                    DBConnection.Query(qryExplain);
+                }
+                else
+                {
+                    // execute query and get result set
+                    DBConnection.Query(CurrentQuery);
+                }
 
                 DataTable dt;
                 try
