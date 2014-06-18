@@ -207,6 +207,14 @@
       <Word>NATURAL</Word>
       <Word>RECORD</Word>
       <Word>SUBTYPE</Word>
+      <Word>EXPLAIN</Word>
+      <Word>TOP</Word>
+      <Word>LIMIT</Word>
+      <Word>LEFT</Word>
+      <Word>RIGHT</Word>
+      <Word>OUTER</Word>
+      <Word>INNER</Word>
+      <Word>JOIN</Word>
     </Keywords>
     <Rule color="Punctuation">
       [?,.;()\[\]{}+\-/%*&lt;&gt;^+~!|&amp;]+
