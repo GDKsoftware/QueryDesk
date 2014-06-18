@@ -19,7 +19,7 @@ namespace QueryDesk
         void CloseQuery();
 
         List<string> ListTableNames();
-        List<string> ListFieldNames(string tablename);
+        Dictionary<string, string> ListFieldNames(string tablename);
 
         char GetParamPrefixChar();
     }
@@ -131,7 +131,7 @@ namespace QueryDesk
             return null;
         }
 
-        public List<string> ListFieldNames(string tablename)
+        public Dictionary<string, string> ListFieldNames(string tablename)
         {
             var tblqry = new StoredQuery("DESC `" + tablename + "`;");
             if (Query(tblqry))
@@ -139,10 +139,10 @@ namespace QueryDesk
                 var dt = ResultsAsDataTable();
                 if (dt != null)
                 {
-                    var lst = new List<string>();
+                    var lst = new Dictionary<string, string>();
                     foreach (var row in dt.AsEnumerable())
                     {
-                        lst.Add(row.Field<string>(0));
+                        lst.Add(row.Field<string>(0), row.Field<string>(1));
                     }
                     return lst;
                 }
@@ -250,20 +250,22 @@ namespace QueryDesk
             return null;
         }
 
-        public List<string> ListFieldNames(string tablename)
+        public Dictionary<string, string> ListFieldNames(string tablename)
         {
-            var tblqry = new StoredQuery("SELECT COLUMN_NAME" +
-                " FROM INFORMATION_SCHEMA.COLUMNS" +
-                " WHERE TABLE_NAME = 'locationdevices';");
+            var tblqry = new StoredQuery(
+                "SELECT COLUMN_NAME, DATA_TYPE " +
+                " FROM INFORMATION_SCHEMA.COLUMNS " +
+                " WHERE TABLE_NAME = 'locationdevices';"
+                );
             if (Query(tblqry))
             {
                 var dt = ResultsAsDataTable();
                 if (dt != null)
                 {
-                    var lst = new List<string>();
+                    var lst = new Dictionary<string, string>();
                     foreach (var row in dt.AsEnumerable())
                     {
-                        lst.Add(row.Field<string>(0));
+                        lst.Add(row.Field<string>(0), row.Field<string>(1));
                     }
                     return lst;
                 }

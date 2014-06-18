@@ -15,11 +15,13 @@ namespace QueryDesk
     {
         protected string stringval;
         protected string type;
+        protected string desc;
 
-        public QueryComposerCompletionData(string type, string strval)
+        public QueryComposerCompletionData(string type, string strval, string desc)
         {
             this.type = type;
             this.stringval = strval;
+            this.desc = desc;
         }
 
         public void Complete(ICSharpCode.AvalonEdit.Editing.TextArea textArea, ICSharpCode.AvalonEdit.Document.ISegment completionSegment, EventArgs insertionRequestEventArgs)
@@ -34,7 +36,7 @@ namespace QueryDesk
 
         public object Description
         {
-            get { return null; }
+            get { return desc; }
         }
 
         public System.Windows.Media.ImageSource Image
@@ -56,7 +58,7 @@ namespace QueryDesk
     public class QueryComposerHelper
     {
         protected IQueryableConnection DBConnection = null;
-        protected Dictionary<string, List<string>> DBLayout = null;
+        protected Dictionary<string, Dictionary<string, string>> DBLayout = null;
 
         public QueryComposerHelper(IQueryableConnection connection)
         {
@@ -67,7 +69,7 @@ namespace QueryDesk
 
         protected void InitializeLayout()
         {
-            DBLayout = new Dictionary<string, List<string>>();
+            DBLayout = new Dictionary<string, Dictionary<string, string>>();
 
             foreach (var tablename in DBConnection.ListTableNames())
             {
@@ -165,6 +167,7 @@ namespace QueryDesk
             var col = caret.Location.Column;
 
             string word = "";
+            bool showtables = false;
 
             // if the character on/before the current cursor position is a dot, extract the word that's in front of it (likely a tablename)
             if (textarea.Document.Text[textarea.Document.Lines[line - 1].Offset + col - 2] == '.')
@@ -174,23 +177,31 @@ namespace QueryDesk
             else
             {
                 word = DetectSQLTableInQuery(textarea.Document.Text);
+                showtables = true;
             }
 
-            foreach (var tablename in DBLayout.Keys)
+            // loop over tables first to show fields of detected table
+            if (word != "")
             {
-                if (word == "")
+                foreach (var tablename in DBLayout.Keys)
                 {
-                    // no words; list all tables
-                    data.Add(new QueryComposerCompletionData("table", tablename));
-                }
-                else if (word.Equals(tablename,StringComparison.OrdinalIgnoreCase))
-                {
-                    // word matches a tablename; list all fields in this table
-                    foreach (var fieldname in DBLayout[tablename])
+                    if (word.Equals(tablename, StringComparison.OrdinalIgnoreCase))
                     {
-                        data.Add(new QueryComposerCompletionData("field", fieldname));
+                        // word matches a tablename; list all fields in this table
+                        foreach (var fieldname in DBLayout[tablename])
+                        {
+                            data.Add(new QueryComposerCompletionData("field", fieldname.Key, fieldname.Value));
+                        }
                     }
-                    break;
+                }
+            }
+
+            if (showtables)
+            {
+                // loop over list again to show tablenames
+                foreach (var tablename in DBLayout.Keys)
+                {
+                    data.Add(new QueryComposerCompletionData("table", tablename, null));
                 }
             }
         }
