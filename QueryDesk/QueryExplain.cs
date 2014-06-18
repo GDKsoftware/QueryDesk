@@ -117,6 +117,10 @@ namespace QueryDesk
                     {
                         return true;
                     }
+                    else if (s.Contains("temporary"))
+                    {
+                        return true;
+                    }
                 }
             }
 
