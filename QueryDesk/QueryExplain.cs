@@ -13,6 +13,8 @@ namespace QueryDesk
         protected StoredQuery Query;
         protected StoredQuery ExplainQuery;
 
+        protected string Error = "";
+
         public CExplainableQuery(IQueryableConnection connection, StoredQuery query)
         {
             Connection = connection;
@@ -26,6 +28,16 @@ namespace QueryDesk
         public abstract ulong getMaxResults();
         public abstract bool isAllIndexed();
         public abstract bool isUsingBadStuff();
+
+        public bool hasErrors()
+        {
+            return (Error != "");
+        }
+
+        public string getErrorMsg()
+        {
+            return Error;
+        }
 
         public StoredQuery _get()
         {
@@ -69,7 +81,16 @@ namespace QueryDesk
 
             if (Connection.Query(ExplainQuery))
             {
-                Results = Connection.ResultsAsDataTable();
+                try
+                {
+                    Results = Connection.ResultsAsDataTable();
+                }
+                catch (Exception e)
+                {
+                    Error = e.Message;
+                    Results = null;
+                }
+                
                 Connection.CloseQuery();
             }
         }
@@ -88,38 +109,49 @@ namespace QueryDesk
 
         public override ulong getMaxResults()
         {
-            ulong i =
-                Results.AsEnumerable().Max(row =>
-                    (row["rows"] == null) ? 0 : (ulong)row["rows"]
-                );
+            ulong i = 0;
+            if (Results != null)
+            {
+                i = Results.AsEnumerable().Max(row =>
+                        (row["rows"] == null) ? 0 : (ulong)row["rows"]
+                    );
+            }
 
             return i;
         }
 
         public override bool isAllIndexed()
         {
-            var i =
+            int i = 0;
+            if (Results != null)
+            {
                 Results.AsEnumerable().Sum(row =>
                     (row["key"] is System.DBNull) ? 0 : 1
                 );
 
-            return (i == Results.Rows.Count);
+                return (i == Results.Rows.Count);
+            }
+
+            return true;
         }
 
         public override bool isUsingBadStuff()
         {
-            foreach (var row in Results.AsEnumerable())
+            if (Results != null)
             {
-                if (!(row["extra"] is System.DBNull))
+                foreach (var row in Results.AsEnumerable())
                 {
-                    string s = (string)row["extra"];
-                    if (s.Contains("filesort"))
+                    if (!(row["extra"] is System.DBNull))
                     {
-                        return true;
-                    }
-                    else if (s.Contains("temporary"))
-                    {
-                        return true;
+                        string s = (string)row["extra"];
+                        if (s.Contains("filesort"))
+                        {
+                            return true;
+                        }
+                        else if (s.Contains("temporary"))
+                        {
+                            return true;
+                        }
                     }
                 }
             }

@@ -183,7 +183,12 @@ namespace QueryDesk
                 CExplainableQuery expl = QueryExplanationFactory.newExplain(DBConnection, CurrentQuery);
                 if (expl != null)
                 {
-                    if (!expl.isAllIndexed())
+                    if (expl.hasErrors())
+                    {
+                        MessageBox.Show(expl.getErrorMsg(), "Query error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+                    else if (!expl.isAllIndexed())
                     {
                         if (MessageBox.Show("This query does not fully make use of indexes, are you sure you want to execute this query?", "Query warning", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                         {

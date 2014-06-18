@@ -82,9 +82,9 @@ namespace QueryDesk
             {
                 adapter.Fill(ds, "query");
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                throw e;
             }
 
             return ds.Tables["query"];
