@@ -92,8 +92,16 @@ namespace QueryDesk
             {
                 var c = s[p];
                 // word separators; space, dot, comma, tab, enter
-                if ((c == ' ') || (c == '.') || (c == ',') || (c == 7) || (c == 10) || (c == 13))
+                if ((c == ' ') || (c == '.') || (c == ',') || (c == '<') || (c == '>') || (c == '=') || (c == '(') || (c == ')') || (c == 7) || (c == 10) || (c == 13))
                 {
+                    if (w.StartsWith("`") || w.StartsWith("["))
+                    {
+                        if (w.EndsWith("`") || w.EndsWith("]"))
+                        {
+                            return w.Substring(1, w.Length - 2);
+                        }
+                    }
+
                     return w;
                 }
                 else
@@ -114,10 +122,18 @@ namespace QueryDesk
             {
                 var c = s[p];
                 // word separators; space, dot, comma, tab, enter
-                if ((c == ' ') || (c == '.') || (c == ',') || (c == 7) || (c == 10) || (c == 13))
+                if ((c == ' ') || (c == '.') || (c == ',') || (c == '<') || (c == '>') || (c == '=') || (c == '(') || (c == ')') || (c == 7) || (c == 10) || (c == 13))
                 {
                     if (w.Trim() != "")
                     {
+                        if (w.StartsWith("`") || w.StartsWith("["))
+                        {
+                            if (w.EndsWith("`") || w.EndsWith("]"))
+                            {
+                                return w.Substring(1, w.Length - 2);
+                            }
+                        }
+
                         return w;
                     }
                 }
