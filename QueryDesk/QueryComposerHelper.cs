@@ -8,9 +8,34 @@ using System.Windows.Input;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Editing;
 using System.Windows;
+using System.Windows.Media.Imaging;
+using System.Reflection;
 
 namespace QueryDesk
 {
+    public static class QueryComposerIconResources
+    {
+        public static BitmapSource Table = null;
+        public static BitmapSource Field = null;
+
+        public static void Init()
+        {
+            if (Table == null)
+            {
+                var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("QueryDesk.Resources.Table_748.png");
+                PngBitmapDecoder decoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+                Table = decoder.Frames[0];
+            }
+            
+            if (Field == null)
+            {
+                var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("QueryDesk.Resources.Template_514.png");
+                PngBitmapDecoder decoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
+                Field = decoder.Frames[0];
+            }
+        }
+    }
+
     public class QueryComposerCompletionData: ICompletionData
     {
         protected string stringval;
@@ -41,7 +66,20 @@ namespace QueryDesk
 
         public System.Windows.Media.ImageSource Image
         {
-            get { return null; }
+            get {
+                if (this.type == "field")
+                {
+                    return QueryComposerIconResources.Field;
+                }
+                else if (this.type == "table")
+                {
+                    return QueryComposerIconResources.Table;
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
 
         public double Priority

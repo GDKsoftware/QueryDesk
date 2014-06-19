@@ -29,6 +29,8 @@ namespace QueryDesk
         {
             InitializeComponent();
 
+            QueryComposerIconResources.Init();
+
             // datacontext of window is inherited by all controls
             this.DataContext = CurrentSelectedServerLink;
 
