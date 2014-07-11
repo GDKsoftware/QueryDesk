@@ -10,6 +10,9 @@ using ICSharpCode.AvalonEdit.Editing;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Reflection;
+using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using System.Xml;
+using ICSharpCode.AvalonEdit.Highlighting;
 
 namespace QueryDesk
 {
@@ -97,17 +100,20 @@ namespace QueryDesk
     {
         protected IQueryableConnection DBConnection = null;
         protected Dictionary<string, Dictionary<string, string>> DBLayout = null;
+        protected XshdSyntaxDefinition SQLHighlighter = null;
 
         public QueryComposerHelper(IQueryableConnection connection)
         {
             DBConnection = connection;
+
+            SQLHighlighter = HighlightingLoader.LoadXshd(XmlReader.Create(Assembly.GetExecutingAssembly().GetManifestResourceStream("QueryDesk.Resources.SQL.xshd")));
 
             InitializeLayout();
         }
 
         protected void InitializeLayout()
         {
-            DBLayout = new Dictionary<string, Dictionary<string, string>>();
+            DBLayout = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var tablename in DBConnection.ListTableNames())
             {
@@ -152,6 +158,36 @@ namespace QueryDesk
             return "";
         }
 
+        protected Tuple<string, int> ChainExtractPreviousWord(string s, int pos)
+        {
+            string w = "";
+            int p = pos;
+            while (p >= 0)
+            {
+                var c = s[p];
+                // word separators; space, dot, comma, tab, enter
+                if ((c == ' ') || (c == '.') || (c == ',') || (c == '<') || (c == '>') || (c == '=') || (c == '(') || (c == ')') || (c == 7) || (c == 10) || (c == 13))
+                {
+                    if (w.StartsWith("`") || w.StartsWith("["))
+                    {
+                        if (w.EndsWith("`") || w.EndsWith("]"))
+                        {
+                            return new Tuple<string, int>(w.Substring(1, w.Length - 2), p);
+                        }
+                    }
+
+                    return new Tuple<string, int>(w, p);
+                }
+                else
+                {
+                    w = c + w;
+                }
+                p--;
+            }
+
+            return new Tuple<string, int>("", 0);
+        }
+
         protected string ExtractNextWord(string s, int pos)
         {
             string w = "";
@@ -185,6 +221,44 @@ namespace QueryDesk
             return "";
         }
 
+        protected Tuple<string,int> ChainExtractNextWord(string s, int pos)
+        {
+            string w = "";
+            int p = pos;
+            while (p < s.Length)
+            {
+                var c = s[p];
+                // word separators; space, dot, comma, tab, enter
+                if ((c == ' ') || (c == '.') || (c == ',') || (c == '<') || (c == '>') || (c == '=') || (c == '(') || (c == ')') || (c == 7) || (c == 10) || (c == 13))
+                {
+                    if (w.Trim() != "")
+                    {
+                        if (w.StartsWith("`") || w.StartsWith("["))
+                        {
+                            if (w.EndsWith("`") || w.EndsWith("]"))
+                            {
+                                return new Tuple<string, int>(w.Substring(1, w.Length - 2), p);
+                            }
+                        }
+
+                        return new Tuple<string,int>(w, p);
+                    }
+                }
+                else
+                {
+                    w = w + c;
+                }
+                p++;
+            }
+
+            return new Tuple<string,int>("", s.Length);
+        }
+
+        protected bool IsExistingTable(string s)
+        {
+            return DBLayout.Keys.Contains(s, StringComparer.OrdinalIgnoreCase);
+        }
+
         protected string DetectSQLTableInQuery(string s)
         {
             var iFrom   = s.IndexOf("from", StringComparison.OrdinalIgnoreCase);
@@ -202,6 +276,92 @@ namespace QueryDesk
             else if (iUpdate != -1)
             {
                 return ExtractNextWord(s, iUpdate + 6);
+            }
+
+            return "";
+        }
+
+        public bool IsSQLKeyWord(string word)
+        {
+            foreach (var elem1 in SQLHighlighter.Elements.AsEnumerable<XshdElement>())
+            {
+                if (elem1 is XshdRuleSet)
+                {
+                    foreach (var elem2 in (elem1 as XshdRuleSet).Elements.AsEnumerable<XshdElement>())
+                    {
+                        if (elem2 is XshdKeywords)
+                        {
+                            return (elem2 as XshdKeywords).Words.Contains(word, StringComparer.OrdinalIgnoreCase);
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        protected Dictionary<string, string> DetectAllSQLTablesInQuery(string sql)
+        {
+            var detected = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            var p = ChainExtractNextWord(sql, 0);
+            while (p.Item2 < sql.Length)
+            {
+                var word = p.Item1;
+
+                // possible occurences of alias
+                //  "from tablename as alias"
+                //  "from tablename alias"
+                //  "join tablename as alias on"
+                //  "join tablename alias on"
+
+                if (word.Equals("from", StringComparison.OrdinalIgnoreCase) ||
+                    word.Equals("into", StringComparison.OrdinalIgnoreCase) ||
+                    word.Equals("update", StringComparison.OrdinalIgnoreCase) ||
+                    word.Equals("join", StringComparison.OrdinalIgnoreCase))
+                {
+                    // first word behind from/into/etc is the tablename
+                    p = ChainExtractNextWord(sql, p.Item2);
+                    var tablename = p.Item1;
+
+                    // after that we might have 'as' or an alias, but ... the next word might also be an sql keyword
+                    p = ChainExtractNextWord(sql, p.Item2);
+                    if (p.Item1.Equals("as", StringComparison.OrdinalIgnoreCase))
+                    {
+                        // we know 100% sure next word is an alias for this table
+                        p = ChainExtractNextWord(sql, p.Item2);
+                        
+                        detected.Add(p.Item1, tablename);
+                    }
+                    else
+                    {
+                        // ... now what
+                        if (!IsSQLKeyWord(p.Item1))
+                        {
+                            detected.Add(p.Item1, tablename);
+                        }
+                        else 
+                        {
+                            // add without alias
+                            detected.Add(tablename, tablename);
+                        }
+                    }
+                }
+
+                p = ChainExtractNextWord(sql, p.Item2);
+            }
+
+            return detected;
+        }
+
+        protected string GetTableNameForAlias(string sql, string alias)
+        {
+            var detected = DetectAllSQLTablesInQuery(sql);
+
+            string tablename;
+            if (detected.TryGetValue(alias, out tablename))
+            {
+                return tablename;
             }
 
             return "";
@@ -227,6 +387,12 @@ namespace QueryDesk
             if (textarea.Document.Text[textarea.Document.Lines[line - 1].Offset + col - 2] == '.')
             {
                 word = ExtractPreviousWord(textarea.Document.Text, textarea.Document.Lines[line - 1].Offset + col - 3);
+
+                if (!IsExistingTable(word))
+                {
+                    // if word is not a tablename, it might be an alias for a table, if so, we need to find out the actual tablename
+                    word = GetTableNameForAlias(textarea.Document.Text, word);
+                }
             }
             else
             {
@@ -237,15 +403,13 @@ namespace QueryDesk
             // loop over tables first to show fields of detected table
             if (word != "")
             {
-                foreach (var tablename in DBLayout.Keys)
+                Dictionary<string, string> fields;
+                if (DBLayout.TryGetValue(word, out fields))
                 {
-                    if (word.Equals(tablename, StringComparison.OrdinalIgnoreCase))
+                    // word matches a tablename; list all fields in this table
+                    foreach (var fieldname in fields)
                     {
-                        // word matches a tablename; list all fields in this table
-                        foreach (var fieldname in DBLayout[tablename])
-                        {
-                            data.Add(new QueryComposerCompletionData("field", fieldname.Key, fieldname.Value));
-                        }
+                        data.Add(new QueryComposerCompletionData("field", fieldname.Key, fieldname.Value));
                     }
                 }
             }
@@ -259,5 +423,6 @@ namespace QueryDesk
                 }
             }
         }
+
     }
 }
