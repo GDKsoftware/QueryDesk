@@ -29,7 +29,7 @@ namespace QueryDesk
         {
             InitializeComponent();
 
-            QueryComposerIconResources.Init();
+            QueryComposerResources.Init();
 
             // datacontext of window is inherited by all controls
             this.DataContext = CurrentSelectedServerLink;
@@ -168,6 +168,7 @@ namespace QueryDesk
                 {
                     // implementation when x button is used on tab
                     pgTabs.Items.Remove(tab);
+                    QueryComposerResources.UnsetComposerHelper(tabcontent.DBConnection);
                 };
                 tab.Header = header;
                 tab.Content = tabcontent;

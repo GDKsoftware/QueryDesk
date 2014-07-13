@@ -33,7 +33,7 @@ namespace QueryDesk
             InitializeComponent();
 
             // Apply the SQL syntax highlighting definition
-            edSQL.SyntaxHighlighting = HighlightingLoader.Load(XmlReader.Create(Assembly.GetExecutingAssembly().GetManifestResourceStream("QueryDesk.Resources.SQL.xshd")), HighlightingManager.Instance);
+            edSQL.SyntaxHighlighting = QueryComposerResources.SQLSyntaxHiglighting;
 
             edSQL.TextArea.TextEntering += edSQL_TextArea_TextEntering;
             edSQL.TextArea.TextEntered += edSQL_TextArea_TextEntered;
@@ -85,7 +85,7 @@ namespace QueryDesk
         public void Initialize(AppDBQueryLink linkQueryRow, IQueryableConnection connection)
         {
             CurrentQuery = linkQueryRow;
-            completionHelper = new QueryComposerHelper(connection);
+            completionHelper = QueryComposerResources.ComposerHelper(connection);
 
             Reset();
         }

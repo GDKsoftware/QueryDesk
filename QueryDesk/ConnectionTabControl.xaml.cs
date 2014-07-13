@@ -29,7 +29,7 @@ namespace QueryDesk
     public partial class ConnectionTabControl : UserControl
     {
         private IAppDBServersAndQueries AppDB;
-        private IQueryableConnection DBConnection;
+        public IQueryableConnection DBConnection;
         private int connection_id = 0;
 
         private AppDBServerType dbtype = AppDBServerType.Void;

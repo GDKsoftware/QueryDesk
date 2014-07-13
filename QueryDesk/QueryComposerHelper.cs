@@ -16,10 +16,13 @@ using ICSharpCode.AvalonEdit.Highlighting;
 
 namespace QueryDesk
 {
-    public static class QueryComposerIconResources
+    public static class QueryComposerResources
     {
         public static BitmapSource Table = null;
         public static BitmapSource Field = null;
+        public static XshdSyntaxDefinition SQLHighlighter = null;
+        public static IHighlightingDefinition SQLSyntaxHiglighting = null;
+        internal static Dictionary<IQueryableConnection, QueryComposerHelper> Composers = new Dictionary<IQueryableConnection,QueryComposerHelper>();
 
         public static void Init()
         {
@@ -36,6 +39,32 @@ namespace QueryDesk
                 PngBitmapDecoder decoder = new PngBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
                 Field = decoder.Frames[0];
             }
+
+            if (SQLHighlighter == null)
+            {
+                var reader = XmlReader.Create(Assembly.GetExecutingAssembly().GetManifestResourceStream("QueryDesk.Resources.SQL.xshd"));
+                SQLHighlighter = HighlightingLoader.LoadXshd(reader);
+
+                SQLSyntaxHiglighting = HighlightingLoader.Load(SQLHighlighter, HighlightingManager.Instance);
+            }
+        }
+
+        public static QueryComposerHelper ComposerHelper(IQueryableConnection connection)
+        {
+            QueryComposerHelper composer;
+
+            if (!Composers.TryGetValue(connection, out composer))
+            {
+                composer = new QueryComposerHelper(connection);
+                Composers.Add(connection, composer);
+            }
+
+            return composer;
+        }
+
+        public static void UnsetComposerHelper(IQueryableConnection connection)
+        {
+            Composers.Remove(connection);
         }
     }
 
@@ -72,11 +101,11 @@ namespace QueryDesk
             get {
                 if (this.type == "field")
                 {
-                    return QueryComposerIconResources.Field;
+                    return QueryComposerResources.Field;
                 }
                 else if (this.type == "table")
                 {
-                    return QueryComposerIconResources.Table;
+                    return QueryComposerResources.Table;
                 }
                 else
                 {
@@ -100,13 +129,10 @@ namespace QueryDesk
     {
         protected IQueryableConnection DBConnection = null;
         protected Dictionary<string, Dictionary<string, string>> DBLayout = null;
-        protected XshdSyntaxDefinition SQLHighlighter = null;
 
         public QueryComposerHelper(IQueryableConnection connection)
         {
             DBConnection = connection;
-
-            SQLHighlighter = HighlightingLoader.LoadXshd(XmlReader.Create(Assembly.GetExecutingAssembly().GetManifestResourceStream("QueryDesk.Resources.SQL.xshd")));
 
             InitializeLayout();
         }
@@ -283,7 +309,7 @@ namespace QueryDesk
 
         public bool IsSQLKeyWord(string word)
         {
-            foreach (var elem1 in SQLHighlighter.Elements.AsEnumerable<XshdElement>())
+            foreach (var elem1 in QueryComposerResources.SQLHighlighter.Elements.AsEnumerable<XshdElement>())
             {
                 if (elem1 is XshdRuleSet)
                 {
