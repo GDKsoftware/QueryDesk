@@ -155,7 +155,7 @@ namespace QueryDesk
                 p--;
             }
 
-            return "";
+            return w;
         }
 
         protected Tuple<string, int> ChainExtractPreviousWord(string s, int pos)
@@ -185,7 +185,7 @@ namespace QueryDesk
                 p--;
             }
 
-            return new Tuple<string, int>("", 0);
+            return new Tuple<string, int>(w, p);
         }
 
         protected string ExtractNextWord(string s, int pos)
@@ -218,7 +218,7 @@ namespace QueryDesk
                 p++;
             }
 
-            return "";
+            return w;
         }
 
         protected Tuple<string,int> ChainExtractNextWord(string s, int pos)
@@ -251,7 +251,7 @@ namespace QueryDesk
                 p++;
             }
 
-            return new Tuple<string,int>("", s.Length);
+            return new Tuple<string,int>(w, s.Length);
         }
 
         protected bool IsExistingTable(string s)
