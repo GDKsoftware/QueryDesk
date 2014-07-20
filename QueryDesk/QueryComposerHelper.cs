@@ -13,6 +13,7 @@ using System.Reflection;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using System.Xml;
 using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Document;
 
 namespace QueryDesk
 {
@@ -68,6 +69,35 @@ namespace QueryDesk
         }
     }
 
+    public class CustomSegment: ISegment
+    {
+        private int os;
+        private int le;
+        private int eo;
+
+        public CustomSegment(int start, int length)
+        {
+            os = start;
+            le = length;
+            eo = os + le;
+        }
+
+        public int EndOffset
+        {
+            get { return eo; }
+        }
+
+        public int Length
+        {
+            get { return le; }
+        }
+
+        public int Offset
+        {
+            get { return os; }
+        }
+    }
+
     public class QueryComposerCompletionData: ICompletionData
     {
         protected string stringval;
@@ -81,9 +111,18 @@ namespace QueryDesk
             this.desc = desc;
         }
 
-        public void Complete(ICSharpCode.AvalonEdit.Editing.TextArea textArea, ICSharpCode.AvalonEdit.Document.ISegment completionSegment, EventArgs insertionRequestEventArgs)
+        public void Complete(ICSharpCode.AvalonEdit.Editing.TextArea textArea, ISegment completionSegment, EventArgs insertionRequestEventArgs)
         {
-            textArea.Document.Replace(completionSegment, this.Text);
+            var word = QueryComposerHelper.ExtractPreviousWord(textArea.Document.Text, completionSegment.EndOffset - 1);
+
+            ISegment replaceSegment = completionSegment;
+
+            if (stringval.Substring(0, word.Length) == word)
+            {
+                replaceSegment = new CustomSegment(completionSegment.EndOffset - word.Length, word.Length);
+            }
+
+            textArea.Document.Replace(replaceSegment, stringval);
         }
 
         public object Content
@@ -129,6 +168,7 @@ namespace QueryDesk
     {
         protected IQueryableConnection DBConnection = null;
         protected Dictionary<string, Dictionary<string, string>> DBLayout = null;
+        public string Currentword = "";
 
         public QueryComposerHelper(IQueryableConnection connection)
         {
@@ -154,7 +194,7 @@ namespace QueryDesk
         /// <param name="s"></param>
         /// <param name="pos"></param>
         /// <returns></returns>
-        protected string ExtractPreviousWord(string s, int pos)
+        public static string ExtractPreviousWord(string s, int pos)
         {
             string w = "";
             int p = pos;
@@ -184,7 +224,7 @@ namespace QueryDesk
             return w;
         }
 
-        protected Tuple<string, int> ChainExtractPreviousWord(string s, int pos)
+        public static Tuple<string, int> ChainExtractPreviousWord(string s, int pos)
         {
             string w = "";
             int p = pos;
@@ -214,7 +254,7 @@ namespace QueryDesk
             return new Tuple<string, int>(w, p);
         }
 
-        protected string ExtractNextWord(string s, int pos)
+        public static string ExtractNextWord(string s, int pos)
         {
             string w = "";
             int p = pos;
@@ -247,7 +287,7 @@ namespace QueryDesk
             return w;
         }
 
-        protected Tuple<string,int> ChainExtractNextWord(string s, int pos)
+        public static Tuple<string, int> ChainExtractNextWord(string s, int pos)
         {
             string w = "";
             int p = pos;
@@ -285,7 +325,7 @@ namespace QueryDesk
             return DBLayout.Keys.Contains(s, StringComparer.OrdinalIgnoreCase);
         }
 
-        protected string DetectSQLTableInQuery(string s)
+        public static string DetectSQLTableInQuery(string s)
         {
             var iFrom   = s.IndexOf("from", StringComparison.OrdinalIgnoreCase);
             var iInto   = s.IndexOf("into", StringComparison.OrdinalIgnoreCase);
@@ -407,6 +447,7 @@ namespace QueryDesk
             var col = caret.Location.Column;
 
             string word = "";
+            Currentword = "";
             bool showtables = false;
 
             // if the character on/before the current cursor position is a dot, extract the word that's in front of it (likely a tablename)
@@ -422,6 +463,8 @@ namespace QueryDesk
             }
             else
             {
+                Currentword = ExtractPreviousWord(textarea.Document.Text, textarea.Document.Lines[line - 1].Offset + col - 2);
+
                 word = DetectSQLTableInQuery(textarea.Document.Text);
                 showtables = true;
             }

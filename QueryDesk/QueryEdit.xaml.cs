@@ -54,6 +54,8 @@ namespace QueryDesk
             // fill data (completion options) based on e (position, context etc)
             completionHelper.Initialize(e, data);
             completionWindow.Show();
+            completionWindow.CompletionList.IsFiltering = false;
+            completionWindow.CompletionList.SelectItem(completionHelper.Currentword);
             completionWindow.Closed += delegate
             {
                 completionWindow = null;
