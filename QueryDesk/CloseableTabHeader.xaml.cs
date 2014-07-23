@@ -47,5 +47,14 @@ namespace QueryDesk
         {
             CloseTab();
         }
+
+        private void Grid_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            // Close connection tab with a middle mouse button click
+            if (e.ChangedButton == MouseButton.Middle)
+            {
+                CloseTab();
+            }
+        }
     }
 }
