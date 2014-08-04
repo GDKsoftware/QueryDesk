@@ -23,17 +23,17 @@
                             <Label Content="Type" HorizontalAlignment="Left" Margin="13,15,0,0" VerticalAlignment="Top"/>
                             <ComboBox x:Name="cbType" HorizontalAlignment="Left" Margin="147,15,0,0" VerticalAlignment="Top" Width="141" SelectedValue="{Binding type}"/>
                             <Label Content="Name" HorizontalAlignment="Left" Margin="13,42,0,0" VerticalAlignment="Top"/>
-                            <TextBox x:Name="edName" HorizontalAlignment="Left" Height="23" Margin="147,42,0,0" TextWrapping="Wrap" Text="{Binding Path=name}" VerticalAlignment="Top" Width="141" TabIndex="0" />
+                            <TextBox x:Name="edName" HorizontalAlignment="Left" Height="23" Margin="147,42,0,0" Text="{Binding Path=name}" VerticalAlignment="Top" Width="141" TabIndex="0" />
                             <Label Content="Server" HorizontalAlignment="Left" Margin="13,71,0,0" VerticalAlignment="Top"/>
-                            <TextBox x:Name="edServer" HorizontalAlignment="Left" Height="23" Margin="147,71,0,0" TextWrapping="Wrap" Text="{Binding Path=host}" VerticalAlignment="Top" Width="141" TabIndex="1"/>
+                            <TextBox x:Name="edServer" HorizontalAlignment="Left" Height="23" Margin="147,71,0,0" Text="{Binding Path=host}" VerticalAlignment="Top" Width="141" TabIndex="1"/>
                             <Label Content="Port" HorizontalAlignment="Left" Margin="13,100,0,0" VerticalAlignment="Top"/>
-                            <TextBox x:Name="edPort" HorizontalAlignment="Left" Height="23" Margin="147,100,0,0" TextWrapping="Wrap" Text="{Binding Path=port}" VerticalAlignment="Top" Width="141" TabIndex="1"/>
+                            <TextBox x:Name="edPort" HorizontalAlignment="Left" Height="23" Margin="147,100,0,0" Text="{Binding Path=port}" VerticalAlignment="Top" Width="141" TabIndex="1"/>
                             <Label Content="Username" HorizontalAlignment="Left" Margin="13,129,0,0" VerticalAlignment="Top"/>
-                            <TextBox x:Name="edUsername" HorizontalAlignment="Left" Height="23" Margin="147,129,0,0" TextWrapping="Wrap" Text="{Binding Path=username}" VerticalAlignment="Top" Width="141" TabIndex="2"/>
+                            <TextBox x:Name="edUsername" HorizontalAlignment="Left" Height="23" Margin="147,129,0,0" Text="{Binding Path=username}" VerticalAlignment="Top" Width="141" TabIndex="2"/>
                             <Label Content="Password" HorizontalAlignment="Left" Margin="13,157,0,0" VerticalAlignment="Top"/>
                             <PasswordBox x:Name="edPassword" HorizontalAlignment="Left" Margin="147,157,0,0" Password="" VerticalAlignment="Top" Height="24" Width="141" TabIndex="3"/>
                             <Label Content="Database" HorizontalAlignment="Left" Margin="13,186,0,0" VerticalAlignment="Top"/>
-                            <TextBox x:Name="edDatabase" HorizontalAlignment="Left" Height="23" Margin="147,186,0,0" TextWrapping="Wrap" Text="{Binding Path=databasename}" VerticalAlignment="Top" Width="141" TabIndex="4"/>
+                            <TextBox x:Name="edDatabase" HorizontalAlignment="Left" Height="23" Margin="147,186,0,0" Text="{Binding Path=databasename}" VerticalAlignment="Top" Width="141" TabIndex="4"/>
                             <Button x:Name="btnSaveServerSettings" Content="Save" HorizontalAlignment="Left" Margin="198,231,0,-23" VerticalAlignment="Top" Width="90" Click="btnSaveServerSettings_Click" />
                         </Grid>
                     </GroupBox>
