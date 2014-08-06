@@ -96,6 +96,15 @@ namespace QueryDesk
         {
             edShortDescription.Text = CurrentQuery.name;
             edSQL.Text = CurrentQuery.sqltext;
+
+            // Set form title
+            SetTitle();
+        }
+
+        private void SetTitle()
+        {
+            // Set form title depending on edit state
+            Title = CurrentQuery.id > 0 ? "Edit query" : "Add query";
         }
 
         private void Save()
