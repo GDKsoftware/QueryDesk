@@ -39,7 +39,7 @@
                     </GroupBox>
                     <Button x:Name="btnNewServer" Content="Add" HorizontalAlignment="Left" Margin="265,10,0,0" VerticalAlignment="Top" Width="53" Click="btnNewServer_Click" ToolTip="Add new connection"/>
                     <Button x:Name="btnDeleteServer" Content="Delete" HorizontalAlignment="Left" Margin="323,10,0,0" VerticalAlignment="Top" Width="53" Click="btnDeleteServer_Click" ToolTip="Delete connection"/>
-                    <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Left" Margin="499,387,0,0" VerticalAlignment="Top" Width="75" Click="btnCancel_Click"/>
+                    <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="75" Click="btnCancel_Click"/>
                 </Grid>
             </TabItem>
         </TabControl>
