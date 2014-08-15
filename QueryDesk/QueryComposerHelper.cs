@@ -390,28 +390,36 @@ namespace QueryDesk
                     p = ChainExtractNextWord(sql, p.Item2);
                     var tablename = p.Item1;
 
-                    // after that we might have 'as' or an alias, but ... the next word might also be an sql keyword
-                    p = ChainExtractNextWord(sql, p.Item2);
-                    if (p.Item1.Equals("as", StringComparison.OrdinalIgnoreCase))
+                    try
                     {
-                        // we know 100% sure next word is an alias for this table
+                        // after that we might have 'as' or an alias, but ... the next word might also be an sql keyword
                         p = ChainExtractNextWord(sql, p.Item2);
-                        
-                        detected.Add(p.Item1, tablename);
-                    }
-                    else
-                    {
-                        // ... now what
-                        if (!IsSQLKeyWord(p.Item1))
+                        if (p.Item1.Equals("as", StringComparison.OrdinalIgnoreCase))
                         {
+                            // we know 100% sure next word is an alias for this table
+                            p = ChainExtractNextWord(sql, p.Item2);
+
                             detected.Add(p.Item1, tablename);
                         }
-                        else 
+                        else
                         {
-                            // add without alias
-                            detected.Add(tablename, tablename);
+                            // ... now what
+                            if (!IsSQLKeyWord(p.Item1))
+                            {
+                                detected.Add(p.Item1, tablename);
+                            }
+                            else
+                            {
+                                // add without alias
+                                detected.Add(tablename, tablename);
+                            }
                         }
                     }
+                    catch (ArgumentException e)
+                    {
+                        // gets thrown if key already exists in dictionary, we shouldve probably checked that before adding, but we can also just ignore the exception
+                    }
+
                 }
 
                 p = ChainExtractNextWord(sql, p.Item2);

@@ -86,7 +86,15 @@ namespace QueryDesk
             // add parameters sorted to dictionary
             foreach (var p in lstParams)
             {
-                parameters.Add(p, null);
+                try
+                {
+                    parameters.Add(p, null);
+                }
+                catch (ArgumentException e)
+                {
+                    // you added same parameter twice, don't, give them a different name
+                    //  todo: give some kind of error
+                }
             }
         }
 
