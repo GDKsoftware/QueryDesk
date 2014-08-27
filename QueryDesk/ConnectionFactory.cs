@@ -230,7 +230,7 @@ namespace QueryDesk
 
         public List<string> ListTableNames()
         {
-            var tblqry = new StoredQuery("SELECT TABLE_NAME FROM information_schema.tables;");
+            var tblqry = new StoredQuery("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES;");
             if (Query(tblqry))
             {
                 var dt = ResultsAsDataTable();
@@ -255,7 +255,7 @@ namespace QueryDesk
             var tblqry = new StoredQuery(
                 "SELECT COLUMN_NAME, DATA_TYPE " +
                 " FROM INFORMATION_SCHEMA.COLUMNS " +
-                " WHERE TABLE_NAME = 'locationdevices';"
+                " WHERE TABLE_NAME = '" + tablename + "';"
                 );
             if (Query(tblqry))
             {
