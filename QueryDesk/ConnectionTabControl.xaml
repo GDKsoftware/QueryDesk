@@ -16,7 +16,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
         <Label Content="Query" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,8,0,0" Width="42" Height="26" />
-        <ComboBox x:Name="cmbQueries" VerticalAlignment="Top" Margin="72,10,226,0" SelectionChanged="cmbQueries_SelectionChanged" Height="22"/>
+        <ComboBox x:Name="cmbQueries" VerticalAlignment="Top" Margin="57,10,226,0" SelectionChanged="cmbQueries_SelectionChanged" Height="22"/>
         <Button x:Name="btnGoQuery" Content="Go" HorizontalAlignment="Right" Margin="0,10,146,0" VerticalAlignment="Top" Width="75" Click="btnGoQuery_Click" ToolTip="Execute query" Height="22"/>
         <avalonedit:TextEditor x:Name="edSQL" FontFamily="Consolas" FontSize="12" Margin="10,0" UseLayoutRounding="False" Text="..." WordWrap="True" IsReadOnly="True" Grid.Row="1"/>
         <DataGrid x:Name="gridQueryResults" HorizontalAlignment="Stretch" Margin="10,9,10,0" CanUserResizeRows="False" IsReadOnly="True" Grid.Row="2" />
