@@ -4,11 +4,11 @@
         xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit" x:Name="QueryEdit" x:Class="QueryDesk.frmQueryEdit"
         Title="Edit Query..." Height="415" Width="680" WindowStartupLocation="CenterScreen">
     <Grid>
-        <Label Content="Short desc." HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <Label HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Height="28" Width="65" Content="SQL" />
-        <TextBox x:Name="edShortDescription" Height="23" Margin="93,14,10,0" Text="Fancy Query" VerticalAlignment="Top"/>
-        <Button x:Name="btnSave" Content="Save" VerticalAlignment="Bottom" Margin="0,0,10,10" IsDefault="True" Click="btnSave_Click" HorizontalAlignment="Right" Width="75"/>
-        <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Right" Margin="0,0,90,10" VerticalAlignment="Bottom" IsCancel="True" Click="btnCancel_Click" Width="69"/>
-        <avalonedit:TextEditor x:Name="edSQL" FontFamily="Consolas" FontSize="12" Text="select * from test where bla = 1 and etc = 2 and balbla = 3 order by bla asc, etc desc" Margin="10,74,10,35" WordWrap="True" UseLayoutRounding="False" ShowLineNumbers="True"/>
+        <Label Content="Description" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <Label HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="65" Content="SQL" />
+        <TextBox x:Name="edShortDescription" Height="23" Margin="85,13,10,0" Text="Fancy Query" VerticalAlignment="Top"/>
+        <Button x:Name="btnSave" Content="Save" VerticalAlignment="Bottom" Margin="0,0,84,10" IsDefault="True" Click="btnSave_Click" HorizontalAlignment="Right" Width="75"/>
+        <Button x:Name="btnCancel" Content="Cancel" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" IsCancel="True" Click="btnCancel_Click" Width="69"/>
+        <avalonedit:TextEditor x:Name="edSQL" FontFamily="Consolas" FontSize="12" Text="select * from test where bla = 1 and etc = 2 and balbla = 3 order by bla asc, etc desc" Margin="10,72,10,37" WordWrap="True" UseLayoutRounding="False" ShowLineNumbers="True"/>
     </Grid>
 </Window>
