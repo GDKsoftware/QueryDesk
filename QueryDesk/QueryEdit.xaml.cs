@@ -99,6 +99,24 @@ namespace QueryDesk
 
             // Set form title
             SetTitle();
+
+            // Focus first input field
+            focusFirstInput();
+        }
+
+        private void focusFirstInput()
+        {
+            // Focus first input field
+            if (CurrentQuery.id > 0)
+            {
+                edSQL.Focus();
+                edSQL.CaretOffset = edSQL.Text.Length;
+            }
+            else
+            {
+                edShortDescription.Focus();
+                edShortDescription.SelectAll();
+            }
         }
 
         private void SetTitle()
