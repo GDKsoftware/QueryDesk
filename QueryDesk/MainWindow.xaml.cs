@@ -214,6 +214,9 @@ namespace QueryDesk
         private void btnNewServer_Click(object sender, RoutedEventArgs e)
         {
             CurrentSelectedServerLink.SetSource(new AppDBDummyServer());
+
+            // Focus first input field
+            cbType.Focus();
         }
 
         private void btnDeleteServer_Click(object sender, RoutedEventArgs e)
