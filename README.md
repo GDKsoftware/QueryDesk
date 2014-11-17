@@ -18,7 +18,7 @@ To get the most out of the QueryDesk application, especially in work environment
 
 Steps:
 
-* Create a centralized (non-public *) MySQL database and create the tables by running the script in create_appdb.txt
+* Create a centralized (non-public *) MySQL database and create the tables by running the script in `QueryDesk/create_appdb.sql`
 * Change the App.config to your configuration needs
 * Build the project in VS2013 (possible with the Express for Windows Desktop version)
 
