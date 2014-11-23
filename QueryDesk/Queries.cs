@@ -9,18 +9,8 @@ namespace QueryDesk
     public class StoredQuery
     {
         protected string sqltext;
-        public Dictionary<string, object> parameters = new Dictionary<string, object>();
 
-        public string SQL
-        {
-            get { return sqltext; }
-            set { sqltext = value; ParseParams(); }
-        }
-
-        public Boolean HasParameters()
-        {
-            return parameters.Count > 0;
-        }
+        public Dictionary<string, object> Parameters = new Dictionary<string, object>();
 
         /// <summary>
         /// Inserts string s into list sorted by descending stringlength
@@ -43,12 +33,31 @@ namespace QueryDesk
             lst.Add(s);
         }
 
+        public string SQL
+        {
+            get
+            {
+                return sqltext;
+            }
+
+            set
+            {
+                sqltext = value;
+                ParseParams();
+            }
+        }
+
+        public bool HasParameters()
+        {
+            return Parameters.Count > 0;
+        }
+
         protected void ParseParams()
         {
-            parameters.Clear();
+            Parameters.Clear();
 
             var inparam = false;
-            var paramname = "";
+            var paramname = string.Empty;
 
             List<string> lstParams = new List<string>();
 
@@ -71,14 +80,14 @@ namespace QueryDesk
                     // some other char, probably ending the parameter name
                     AddLenSorted(lstParams, paramname);
                     inparam = false;
-                    paramname = "";
+                    paramname = string.Empty;
                 }
 
                 i++;
             }
 
             // if we're on the end of string and we haven't stored the last paramname yet
-            if (inparam && (paramname != ""))
+            if (inparam && (paramname != string.Empty))
             {
                 AddLenSorted(lstParams, paramname);
             }
@@ -88,9 +97,9 @@ namespace QueryDesk
             {
                 try
                 {
-                    parameters.Add(p, null);
+                    Parameters.Add(p, null);
                 }
-                catch (ArgumentException e)
+                catch (ArgumentException)
                 {
                     // you added same parameter twice, don't, give them a different name
                     //  todo: give some kind of error
@@ -104,7 +113,7 @@ namespace QueryDesk
         /// <param name="rewriteparamprefixchar">char</param>
         public void RewriteParameters(char rewriteparamprefixchar)
         {
-            foreach (var paramname in parameters.Keys)
+            foreach (var paramname in Parameters.Keys)
             {
                 sqltext = sqltext.Replace(':' + paramname, rewriteparamprefixchar + paramname);
                 sqltext = sqltext.Replace('?' + paramname, rewriteparamprefixchar + paramname);
@@ -125,9 +134,9 @@ namespace QueryDesk
 
         public void CopyParamsFrom(StoredQuery qry)
         {
-            foreach (var p in qry.parameters)
+            foreach (var p in qry.Parameters)
             {
-                this.parameters[p.Key] = p.Value;
+                this.Parameters[p.Key] = p.Value;
             }
         }
 

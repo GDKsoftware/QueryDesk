@@ -22,8 +22,8 @@ namespace QueryDesk
     /// </summary>
     public partial class MainWindow : Window, IDisposable
     {
-        private IAppDBServersAndQueries AppDB = null;
-        private AppDBServerLink CurrentSelectedServerLink = new AppDBServerLink(new AppDBDummyServer());
+        private IAppDBServersAndQueries appDB = null;
+        private AppDBServerLink currentSelectedServerLink = new AppDBServerLink(new AppDBDummyServer());
 
         public MainWindow()
         {
@@ -32,7 +32,7 @@ namespace QueryDesk
             QueryComposerResources.Init();
 
             // datacontext of window is inherited by all controls
-            this.DataContext = CurrentSelectedServerLink;
+            this.DataContext = currentSelectedServerLink;
 
             // listsource for combobox
             cbType.ItemsSource = AppDBTypes.List();
@@ -58,8 +58,9 @@ namespace QueryDesk
             // connect to database through connection string set in the App.config
             try
             {
-                AppDB = new AppDBMySQL(connstr);
-                //AppDB = new AppDBDummy(connstr);
+                appDB = new AppDBMySQL(connstr);
+
+                // AppDB = new AppDBDummy(connstr);
             }
             catch (Exception e)
             {
@@ -95,7 +96,7 @@ namespace QueryDesk
         private void EnableDisable()
         {
             // disable controls if AppDB implementation is readonly
-            pnlEditServerInfo.IsEnabled = (AppDB is IAppDBEditableServers);
+            pnlEditServerInfo.IsEnabled = (appDB is IAppDBEditableServers);
             btnNewServer.IsEnabled = pnlEditServerInfo.IsEnabled;
             btnDeleteServer.IsEnabled = pnlEditServerInfo.IsEnabled;
         }
@@ -106,13 +107,13 @@ namespace QueryDesk
         private void RefreshConnectionList()
         {
             // when refreshing the list, the selected entry will most likely disappear
-            long selectedid = CurrentSelectedServerLink.id;
+            long selectedid = currentSelectedServerLink.id;
 
             // make sure the interface won't link to non existing object
-            CurrentSelectedServerLink.SetSource(new AppDBDummyServer());
+            currentSelectedServerLink.SetSource(new AppDBDummyServer());
 
             // set list items to query results
-            lstConnections.ItemsSource = AppDB.getServerListing();
+            lstConnections.ItemsSource = appDB.GetServerListing();
             lstConnections.DisplayMemberPath = "name";
             lstConnections.SelectedValuePath = "id";
 
@@ -147,18 +148,18 @@ namespace QueryDesk
             {
                 var tabcontent = new ConnectionTabControl();
 
-                tabcontent.Height = Double.NaN;
-                tabcontent.Width = Double.NaN;
+                tabcontent.Height = double.NaN;
+                tabcontent.Width = double.NaN;
 
                 tabcontent.Margin = new Thickness(0, 0, 0, 0);
                 tabcontent.HorizontalAlignment = HorizontalAlignment.Stretch;
                 tabcontent.VerticalAlignment = VerticalAlignment.Stretch;
 
                 // setup the datasource to provide querynames
-                tabcontent.Initialize(AppDB, connection.id);
+                tabcontent.Initialize(appDB, connection.id);
 
                 // this also connects to the database and will throw an exception when we can't connect
-                tabcontent.setDatabaseConnection((AppDBServerType)connection.type, connection.getConnectionString());
+                tabcontent.SetDatabaseConnection((AppDBServerType)connection.type, connection.GetConnectionString());
 
                 // create a new tab with usercontrol instance and stretch align that to the tab
                 var tab = new TabItem();
@@ -194,18 +195,18 @@ namespace QueryDesk
             var selection = lstConnections.SelectedItem;
             if (selection != null)
             {
-                CurrentSelectedServerLink.SetSource(selection);
-                edPassword.Password = CurrentSelectedServerLink.password;
+                currentSelectedServerLink.SetSource(selection);
+                edPassword.Password = currentSelectedServerLink.password;
             }
         }
 
         private void btnSaveServerSettings_Click(object sender, RoutedEventArgs e)
         {
-            var editable = (IAppDBEditableServers)AppDB;
+            var editable = (IAppDBEditableServers)appDB;
 
-            long id = CurrentSelectedServerLink.id;
-            CurrentSelectedServerLink.password = edPassword.Password;
-            if (editable.saveServer(CurrentSelectedServerLink) != id)
+            long id = currentSelectedServerLink.id;
+            currentSelectedServerLink.password = edPassword.Password;
+            if (editable.SaveServer(currentSelectedServerLink) != id)
             {
                 RefreshConnectionList();
             }
@@ -213,7 +214,7 @@ namespace QueryDesk
 
         private void btnNewServer_Click(object sender, RoutedEventArgs e)
         {
-            CurrentSelectedServerLink.SetSource(new AppDBDummyServer());
+            currentSelectedServerLink.SetSource(new AppDBDummyServer());
 
             // Focus first input field
             cbType.Focus();
@@ -222,15 +223,15 @@ namespace QueryDesk
         private void btnDeleteServer_Click(object sender, RoutedEventArgs e)
         {
             MessageBoxResult confirmationResult;
-            var editable = (IAppDBEditableServers)AppDB;
+            var editable = (IAppDBEditableServers)appDB;
 
             // Ask for confirmation before removing connection
-            confirmationResult = MessageBox.Show("Are you sure you want to remove \"" + CurrentSelectedServerLink.name + "\" ?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            confirmationResult = MessageBox.Show("Are you sure you want to remove \"" + currentSelectedServerLink.name + "\" ?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (confirmationResult == MessageBoxResult.Yes)
             {
                 // Remove selected connection
-                editable.delServer(CurrentSelectedServerLink);
+                editable.DelServer(currentSelectedServerLink);
 
                 // Refresh connection list
                 RefreshConnectionList();
@@ -239,7 +240,6 @@ namespace QueryDesk
 
         public void Dispose()
         {
-            
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
@@ -249,5 +249,3 @@ namespace QueryDesk
         }
     }
 }
-
-

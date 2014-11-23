@@ -1,18 +1,18 @@
-﻿using MySql.Data.MySqlClient;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MySql.Data.MySqlClient;
 
 namespace QueryDesk
 {
-    class AppDBMySQL: IAppDBServersAndQueries, IAppDBEditableServers, IAppDBEditableQueries, IDisposable
+    public class AppDBMySQL : IAppDBServersAndQueries, IAppDBEditableServers, IAppDBEditableQueries, IDisposable
     {
         private string connectionstring;
-        private MySqlConnection DB;
+        private MySqlConnection db;
 
         public AppDBMySQL(string connectionstring)
         {
@@ -20,9 +20,9 @@ namespace QueryDesk
 
             try
             {
-                DB = new MySqlConnection(connectionstring);
+                db = new MySqlConnection(connectionstring);
 
-                DB.Open(); // throws exception if failed to connect
+                db.Open(); // throws exception if failed to connect
 
                 Upgrade();
             }
@@ -36,7 +36,7 @@ namespace QueryDesk
         private void Upgrade()
         {
             MySqlDataAdapter adapter = new MySqlDataAdapter();
-            var cmd = new MySqlCommand("show columns from connection where Field=?field", DB);
+            var cmd = new MySqlCommand("show columns from connection where Field=?field", db);
             cmd.Parameters.AddWithValue("?field", "type");
 
             adapter.SelectCommand = cmd;
@@ -48,15 +48,15 @@ namespace QueryDesk
 
             if (dt.Rows.Count == 0)
             {
-                var qry = new MySqlCommand("ALTER TABLE  `connection` ADD  `type` INT NOT NULL DEFAULT  '1' AFTER  `id`", DB);
+                var qry = new MySqlCommand("ALTER TABLE  `connection` ADD  `type` INT NOT NULL DEFAULT  '1' AFTER  `id`", db);
                 qry.ExecuteNonQuery();
             }
         }
 
-        public IEnumerable getServerListing()
+        public IEnumerable GetServerListing()
         {
             MySqlDataAdapter adapter = new MySqlDataAdapter();
-            var cmd = new MySqlCommand("select id, type, name, host, port, username, password, databasename, extraparams from connection order by name asc", DB);
+            var cmd = new MySqlCommand("select id, type, name, host, port, username, password, databasename, extraparams from connection order by name asc", db);
 
             adapter.SelectCommand = cmd;
 
@@ -68,10 +68,10 @@ namespace QueryDesk
             return dt.DefaultView;
         }
 
-        public IEnumerable getQueriesListing(long server_id)
+        public IEnumerable GetQueriesListing(long server_id)
         {
             MySqlDataAdapter adapter = new MySqlDataAdapter();
-            var cmd = new MySqlCommand("select id, connection_id, name, sqltext from query where connection_id=?connection_id order by name asc", DB);
+            var cmd = new MySqlCommand("select id, connection_id, name, sqltext from query where connection_id=?connection_id order by name asc", db);
             cmd.Parameters.AddWithValue("?connection_id", server_id);
 
             adapter.SelectCommand = cmd;
@@ -83,21 +83,20 @@ namespace QueryDesk
             return dt.DefaultView;
         }
 
-
-        public long saveServer(AppDBServerLink server)
+        public long SaveServer(AppDBServerLink server)
         {
             MySqlCommand qry;
 
             if (server.id > 0)
             {
                 // update
-                qry = new MySqlCommand("update connection set type=?type, name=?name, host=?host, port=?port, username=?username, password=?password, databasename=?databasename, extraparams=?extraparams where id=?id", DB);
+                qry = new MySqlCommand("update connection set type=?type, name=?name, host=?host, port=?port, username=?username, password=?password, databasename=?databasename, extraparams=?extraparams where id=?id", db);
                 qry.Parameters.AddWithValue("?id", server.id);
             }
             else
             {
                 // insert
-                qry = new MySqlCommand("insert into connection ( type, name, host, port, username, password, databasename, extraparams) values (?type,?name,?host,?port,?username,?password,?databasename,?extraparams); select last_insert_id();", DB);
+                qry = new MySqlCommand("insert into connection ( type, name, host, port, username, password, databasename, extraparams) values (?type,?name,?host,?port,?username,?password,?databasename,?extraparams); select last_insert_id();", db);
             }
 
             qry.Parameters.AddWithValue("?type", server.type);
@@ -120,13 +119,13 @@ namespace QueryDesk
             return server.id;
         }
 
-        public void delServer(AppDBServerLink server)
+        public void DelServer(AppDBServerLink server)
         {
             MySqlCommand qry;
 
             if (server.id > 0)
             {
-                qry = new MySqlCommand("delete from connection where id=?id", DB);
+                qry = new MySqlCommand("delete from connection where id=?id", db);
                 qry.Parameters.AddWithValue("?id", server.id);
 
                 qry.ExecuteNonQuery();
@@ -136,24 +135,24 @@ namespace QueryDesk
             else
             {
                 // if this server isn't an entry in the database, that's ok with me
-                //throw new Exception("");
+                // throw new Exception("");
             }
         }
 
-        public long saveQuery(AppDBQueryLink query)
+        public long SaveQuery(AppDBQueryLink query)
         {
             MySqlCommand qry;
 
             if (query.id > 0)
             {
                 // update
-                qry = new MySqlCommand("update query set name=?name, sqltext=?sqltext, connection_id=?connection_id where id=?id", DB);
+                qry = new MySqlCommand("update query set name=?name, sqltext=?sqltext, connection_id=?connection_id where id=?id", db);
                 qry.Parameters.AddWithValue("?id", query.id);
             }
             else
             {
                 // insert
-                qry = new MySqlCommand("insert into query ( connection_id, name, sqltext) values (?connection_id,?name,?sqltext); select last_insert_id();", DB);
+                qry = new MySqlCommand("insert into query ( connection_id, name, sqltext) values (?connection_id,?name,?sqltext); select last_insert_id();", db);
             }
 
             qry.Parameters.AddWithValue("?connection_id", query.connection_id);
@@ -170,13 +169,13 @@ namespace QueryDesk
             return query.id;
         }
 
-        public void delQuery(AppDBQueryLink query)
+        public void DelQuery(AppDBQueryLink query)
         {
             MySqlCommand qry;
 
             if (query.id > 0)
             {
-                qry = new MySqlCommand("delete from query where id=?id", DB);
+                qry = new MySqlCommand("delete from query where id=?id", db);
                 qry.Parameters.AddWithValue("?id", query.id);
 
                 qry.ExecuteNonQuery();
@@ -191,7 +190,7 @@ namespace QueryDesk
 
         public void Dispose()
         {
-            DB.Dispose();
+            db.Dispose();
         }
     }
 }

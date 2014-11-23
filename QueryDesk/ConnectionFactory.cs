@@ -1,49 +1,70 @@
-﻿using MySql.Data.MySqlClient;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Data;
+using MySql.Data.MySqlClient;
 
 namespace QueryDesk
 {
     public interface IQueryableConnection
     {
         bool Connect();
+
         void Disconnect();
 
         bool Query(StoredQuery qry);
+
         DataTable ResultsAsDataTable();
+
         void CloseQuery();
 
         List<string> ListTableNames();
+
         Dictionary<string, string> ListFieldNames(string tablename);
 
         char GetParamPrefixChar();
     }
 
-    public class MySQLQueryableConnection: IQueryableConnection, IDisposable
+    public static class ConnectionFactory
     {
-        private MySqlConnection DB = null;
-        private String ConnectionString = "";
-        private MySqlCommand CurrentCmd = null;
+        public static IQueryableConnection NewConnection(int type, string connectionstring)
+        {
+            if (type == 1)
+            {
+                return new MySQLQueryableConnection(connectionstring);
+            }
+            else if (type == 2)
+            {
+                return new MSSQLQueryableConnection(connectionstring);
+            }
+
+            return null;
+        }
+    }
+
+    public class MySQLQueryableConnection : IQueryableConnection, IDisposable
+    {
+        private MySqlConnection db = null;
+        private string connectionString = string.Empty;
+        private MySqlCommand currentCmd = null;
 
         public MySQLQueryableConnection(string connectionstr)
         {
-            ConnectionString = connectionstr;
+            connectionString = connectionstr;
 
-            ConnectionString = ConnectionString + ";Allow Zero Datetime=True";
+            connectionString = connectionString + ";Allow Zero Datetime=True";
         }
 
         public bool Connect()
         {
             try
             {
-                DB = new MySqlConnection(ConnectionString);
+                db = new MySqlConnection(connectionString);
 
-                DB.Open(); // throws exception if failed to connect
+                db.Open(); // throws exception if failed to connect
 
                 return true;
             }
@@ -55,27 +76,24 @@ namespace QueryDesk
 
         public void Disconnect()
         {
-            DB.Close();
+            db.Close();
         }
-
 
         public bool Query(StoredQuery qry)
         {
-            CurrentCmd = new MySqlCommand(qry.SQL, DB);
-            foreach (var p in qry.parameters)
+            currentCmd = new MySqlCommand(qry.SQL, db);
+            foreach (var p in qry.Parameters)
             {
-                CurrentCmd.Parameters.AddWithValue(p.Key, p.Value);
+                currentCmd.Parameters.AddWithValue(p.Key, p.Value);
             }
-
 
             return true;
         }
 
-
         public DataTable ResultsAsDataTable()
         {
             MySqlDataAdapter adapter = new MySqlDataAdapter();
-            adapter.SelectCommand = CurrentCmd;
+            adapter.SelectCommand = currentCmd;
 
             DataSet ds = new DataSet();
             try
@@ -92,22 +110,21 @@ namespace QueryDesk
 
         public void CloseQuery()
         {
-            if (CurrentCmd != null)
+            if (currentCmd != null)
             {
-                CurrentCmd.Dispose();
-                CurrentCmd = null;
+                currentCmd.Dispose();
+                currentCmd = null;
             }
         }
 
         public void Dispose()
         {
-            DB.Dispose();
-            if (CurrentCmd != null)
+            db.Dispose();
+            if (currentCmd != null)
             {
-                CurrentCmd.Dispose();
+                currentCmd.Dispose();
             }
         }
-
 
         public List<string> ListTableNames()
         {
@@ -122,6 +139,7 @@ namespace QueryDesk
                     {
                         lst.Add(row.Field<string>(0));
                     }
+
                     return lst;
                 }
 
@@ -144,6 +162,7 @@ namespace QueryDesk
                     {
                         lst.Add(row.Field<string>(0), row.Field<string>(1));
                     }
+
                     return lst;
                 }
 
@@ -161,34 +180,34 @@ namespace QueryDesk
 
     public class MSSQLQueryableConnection : IQueryableConnection, IDisposable
     {
-        private SqlConnection DB = null;
-        private string ConnectionString = "";
-        private SqlCommand CurrentCmd = null;
+        private SqlConnection db = null;
+        private string connectionString = string.Empty;
+        private SqlCommand currentCmd = null;
 
         public MSSQLQueryableConnection(string connectionstr)
         {
-            ConnectionString = connectionstr;
+            connectionString = connectionstr;
         }
 
         public bool Connect()
         {
-            DB = new SqlConnection(ConnectionString);
-            DB.Open();
+            db = new SqlConnection(connectionString);
+            db.Open();
 
             return true;
         }
 
         public void Disconnect()
         {
-            DB.Close();
+            db.Close();
         }
 
         public bool Query(StoredQuery qry)
         {
-            CurrentCmd = new SqlCommand(qry.SQL, DB);
-            foreach (var p in qry.parameters)
+            currentCmd = new SqlCommand(qry.SQL, db);
+            foreach (var p in qry.Parameters)
             {
-                CurrentCmd.Parameters.AddWithValue(p.Key, p.Value);
+                currentCmd.Parameters.AddWithValue(p.Key, p.Value);
             }
 
             return true;
@@ -196,17 +215,17 @@ namespace QueryDesk
 
         public void CloseQuery()
         {
-            if (CurrentCmd != null)
+            if (currentCmd != null)
             {
-                CurrentCmd.Dispose();
-                CurrentCmd = null;
+                currentCmd.Dispose();
+                currentCmd = null;
             }
         }
 
         public DataTable ResultsAsDataTable()
         {
             SqlDataAdapter adapter = new SqlDataAdapter();
-            adapter.SelectCommand = CurrentCmd;
+            adapter.SelectCommand = currentCmd;
 
             DataSet ds = new DataSet();
             try
@@ -223,11 +242,10 @@ namespace QueryDesk
 
         public void Dispose()
         {
-            DB.Dispose();
-            CurrentCmd.Dispose();
+            db.Dispose();
+            currentCmd.Dispose();
         }
-
-
+        
         public List<string> ListTableNames()
         {
             var tblqry = new StoredQuery("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES;");
@@ -241,6 +259,7 @@ namespace QueryDesk
                     {
                         lst.Add(row.Field<string>(0));
                     }
+
                     return lst;
                 }
 
@@ -255,8 +274,7 @@ namespace QueryDesk
             var tblqry = new StoredQuery(
                 "SELECT COLUMN_NAME, DATA_TYPE " +
                 " FROM INFORMATION_SCHEMA.COLUMNS " +
-                " WHERE TABLE_NAME = '" + tablename + "';"
-                );
+                " WHERE TABLE_NAME = '" + tablename + "';");
             if (Query(tblqry))
             {
                 var dt = ResultsAsDataTable();
@@ -267,6 +285,7 @@ namespace QueryDesk
                     {
                         lst.Add(row.Field<string>(0), row.Field<string>(1));
                     }
+
                     return lst;
                 }
 
@@ -279,24 +298,6 @@ namespace QueryDesk
         public char GetParamPrefixChar()
         {
             return '@';
-        }
-    }
-
-    public static class ConnectionFactory
-    {
-        public static IQueryableConnection NewConnection(int type, string connectionstring)
-        {
-            if (type == 1)
-            {
-                return new MySQLQueryableConnection(connectionstring);
-            }
-            else if (type == 2)
-            {
-                return new MSSQLQueryableConnection(connectionstring);
-            }
-
-
-            return null;
         }
     }
 }

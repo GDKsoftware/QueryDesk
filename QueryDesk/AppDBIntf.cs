@@ -11,14 +11,17 @@ using System.Threading.Tasks;
 
 namespace QueryDesk
 {
-    public enum AppDBServerType { Void = 0, MySQL = 1, MSSQL = 2 };
+    public enum AppDBServerType
+    {
+        Void = 0, MySQL = 1, MSSQL = 2
+    }
 
     public static class AppDBTypes
     {
         public static Dictionary<int, string> List()
         {
             var r = new Dictionary<int, string>();
-            r.Add((int)AppDBServerType.Void, "");
+            r.Add((int)AppDBServerType.Void, string.Empty);
             r.Add((int)AppDBServerType.MySQL, "MySQL");
             r.Add((int)AppDBServerType.MSSQL, "MSSQL");
 
@@ -32,28 +35,27 @@ namespace QueryDesk
     public class AppDBQueryLink : INotifyPropertyChanged
     {
         protected object data = null;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         public AppDBQueryLink()
         {
-
         }
 
         public AppDBQueryLink(object source)
         {
-            setSource(source);
+            SetSource(source);
         }
 
-        public void setSource(object source)
+        public void SetSource(object source)
         {
             data = source;
 
             NotifyPropertyChanged("name");
             NotifyPropertyChanged("sqltext");
-            //NotifyPropertyChanged("name");
         }
 
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanged != null)
             {
@@ -76,6 +78,7 @@ namespace QueryDesk
                     return (int)(data.GetType().GetProperty("id").GetValue(data, null));
                 }
             }
+
             set
             {
                 Debug.Assert(data != null);
@@ -109,6 +112,7 @@ namespace QueryDesk
                     return (int)(data.GetType().GetProperty("connection_id").GetValue(data, null));
                 }
             }
+
             set
             {
                 Debug.Assert(data != null);
@@ -142,6 +146,7 @@ namespace QueryDesk
                     return (string)(data.GetType().GetProperty("name").GetValue(data, null));
                 }
             }
+
             set
             {
                 Debug.Assert(data != null);
@@ -175,6 +180,7 @@ namespace QueryDesk
                     return (string)(data.GetType().GetProperty("sqltext").GetValue(data, null));
                 }
             }
+
             set
             {
                 Debug.Assert(data != null);
@@ -197,12 +203,13 @@ namespace QueryDesk
     /// <summary>
     /// Server Class providing properties to bind to from code and from WPF, reading and writing to similar properties of a non-prefined object, or a DataRowView
     /// </summary>
-    public class AppDBServerLink: INotifyPropertyChanged
+    public class AppDBServerLink : INotifyPropertyChanged
     {
         protected object data = null;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             if (PropertyChanged != null)
             {
@@ -225,6 +232,7 @@ namespace QueryDesk
                     return (int)(data.GetType().GetProperty("id").GetValue(data, null));
                 }
             }
+
             set
             {
                 Debug.Assert(data != null);
@@ -258,6 +266,7 @@ namespace QueryDesk
                     return (int)(data.GetType().GetProperty("type").GetValue(data, null));
                 }
             }
+
             set
             {
                 Debug.Assert(data != null);
@@ -278,7 +287,8 @@ namespace QueryDesk
 
         public string name
         {
-            get {
+            get
+            {
                 Debug.Assert(data != null);
                 if (data is DataRowView)
                 {
@@ -290,6 +300,7 @@ namespace QueryDesk
                     return (string)(data.GetType().GetProperty("name").GetValue(data, null));
                 }
             }
+
             set
             {
                 Debug.Assert(data != null);
@@ -324,6 +335,7 @@ namespace QueryDesk
                     return (string)(data.GetType().GetProperty("host").GetValue(data, null));
                 }
             }
+
             set
             {
                 Debug.Assert(data != null);
@@ -358,6 +370,7 @@ namespace QueryDesk
                     return (int)(data.GetType().GetProperty("port").GetValue(data, null));
                 }
             }
+
             set
             {
                 Debug.Assert(data != null);
@@ -392,6 +405,7 @@ namespace QueryDesk
                     return (string)(data.GetType().GetProperty("username").GetValue(data, null));
                 }
             }
+
             set
             {
                 Debug.Assert(data != null);
@@ -426,6 +440,7 @@ namespace QueryDesk
                     return (string)(data.GetType().GetProperty("password").GetValue(data, null));
                 }
             }
+
             set
             {
                 Debug.Assert(data != null);
@@ -460,6 +475,7 @@ namespace QueryDesk
                     return (string)(data.GetType().GetProperty("databasename").GetValue(data, null));
                 }
             }
+
             set
             {
                 Debug.Assert(data != null);
@@ -494,6 +510,7 @@ namespace QueryDesk
                     return (string)(data.GetType().GetProperty("extraparams").GetValue(data, null));
                 }
             }
+
             set
             {
                 Debug.Assert(data != null);
@@ -514,7 +531,6 @@ namespace QueryDesk
 
         public AppDBServerLink()
         {
-
         }
 
         public AppDBServerLink(object source)
@@ -536,13 +552,11 @@ namespace QueryDesk
             NotifyPropertyChanged("extraparams");
         }
 
-        public string getConnectionString()
+        public string GetConnectionString()
         {
-            // todo: what if this isn't a mysqlconnection...
-
-            // todo: port
-
-            // todo: extraparams
+            //// todo: what if this isn't a mysqlconnection...
+            //// todo: port
+            //// todo: extraparams
 
             return
                 "Server=" + host + ";" +
@@ -554,19 +568,22 @@ namespace QueryDesk
 
     public interface IAppDBEditableServers
     {
-        long saveServer(AppDBServerLink server);
-        void delServer(AppDBServerLink server);
+        long SaveServer(AppDBServerLink server);
+
+        void DelServer(AppDBServerLink server);
     }
 
     public interface IAppDBEditableQueries
     {
-        long saveQuery(AppDBQueryLink query);
-        void delQuery(AppDBQueryLink query);
+        long SaveQuery(AppDBQueryLink query);
+
+        void DelQuery(AppDBQueryLink query);
     }
 
     public interface IAppDBServersAndQueries
     {
-        IEnumerable getServerListing();
-        IEnumerable getQueriesListing(long server_id);
+        IEnumerable GetServerListing();
+
+        IEnumerable GetQueriesListing(long server_id);
     }
 }

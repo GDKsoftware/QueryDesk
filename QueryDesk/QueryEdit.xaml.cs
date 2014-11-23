@@ -24,7 +24,7 @@ namespace QueryDesk
     /// </summary>
     public partial class frmQueryEdit : Window
     {
-        protected AppDBQueryLink CurrentQuery;
+        protected AppDBQueryLink currentQuery;
         protected CompletionWindow completionWindow;
         protected QueryComposerHelper completionHelper;
 
@@ -39,7 +39,7 @@ namespace QueryDesk
             edSQL.TextArea.TextEntered += edSQL_TextArea_TextEntered;
         }
 
-        void edSQL_TextArea_TextEntered(object sender, TextCompositionEventArgs e)
+        private void edSQL_TextArea_TextEntered(object sender, TextCompositionEventArgs e)
         {
             if (e.Text == ".")
             {
@@ -47,10 +47,11 @@ namespace QueryDesk
             }
         }
 
-        void edSQL_TextArea_Sense(object sender, TextCompositionEventArgs e)
+        private void edSQL_TextArea_Sense(object sender, TextCompositionEventArgs e)
         {
             completionWindow = new CompletionWindow(edSQL.TextArea);
             IList<ICompletionData> data = completionWindow.CompletionList.CompletionData;
+
             // fill data (completion options) based on e (position, context etc)
             completionHelper.Initialize(e, data);
             completionWindow.Show();
@@ -62,7 +63,7 @@ namespace QueryDesk
             };
         }
 
-        void edSQL_TextArea_TextEntering(object sender, TextCompositionEventArgs e)
+        private void edSQL_TextArea_TextEntering(object sender, TextCompositionEventArgs e)
         {
             var m = ((System.Windows.Input.KeyboardDevice)(((System.Windows.Input.InputEventArgs)(e)).Device)).Modifiers;
             if (e.Text == " " && (m.HasFlag(ModifierKeys.Control)))
@@ -80,13 +81,14 @@ namespace QueryDesk
                     completionWindow.CompletionList.RequestInsertion(e);
                 }
             }
+
             // Do not set e.Handled=true.
             // We still want to insert the character that was typed.
         }
 
         public void Initialize(AppDBQueryLink linkQueryRow, IQueryableConnection connection)
         {
-            CurrentQuery = linkQueryRow;
+            currentQuery = linkQueryRow;
             completionHelper = QueryComposerResources.ComposerHelper(connection);
 
             Reset();
@@ -94,20 +96,20 @@ namespace QueryDesk
 
         private void Reset()
         {
-            edShortDescription.Text = CurrentQuery.name;
-            edSQL.Text = CurrentQuery.sqltext;
+            edShortDescription.Text = currentQuery.name;
+            edSQL.Text = currentQuery.sqltext;
 
             // Set form title
             SetTitle();
 
             // Focus first input field
-            focusFirstInput();
+            FocusFirstInput();
         }
 
-        private void focusFirstInput()
+        private void FocusFirstInput()
         {
             // Focus first input field
-            if (CurrentQuery.id > 0)
+            if (currentQuery.id > 0)
             {
                 edSQL.Focus();
                 edSQL.CaretOffset = edSQL.Text.Length;
@@ -122,13 +124,13 @@ namespace QueryDesk
         private void SetTitle()
         {
             // Set form title depending on edit state
-            Title = CurrentQuery.id > 0 ? "Edit query" : "Add query";
+            Title = currentQuery.id > 0 ? "Edit query" : "Add query";
         }
 
         private void Save()
         {
-            CurrentQuery.name = edShortDescription.Text;
-            CurrentQuery.sqltext = edSQL.Text;
+            currentQuery.name = edShortDescription.Text;
+            currentQuery.sqltext = edSQL.Text;
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)

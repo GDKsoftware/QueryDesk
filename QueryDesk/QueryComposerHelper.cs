@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
-using ICSharpCode.AvalonEdit.CodeCompletion;
-using ICSharpCode.AvalonEdit.Editing;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Reflection;
-using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using System.Xml;
+using ICSharpCode.AvalonEdit.CodeCompletion;
+using ICSharpCode.AvalonEdit.Editing;
+using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Document;
 
@@ -23,7 +23,7 @@ namespace QueryDesk
         public static BitmapSource Field = null;
         public static XshdSyntaxDefinition SQLHighlighter = null;
         public static IHighlightingDefinition SQLSyntaxHiglighting = null;
-        internal static Dictionary<IQueryableConnection, QueryComposerHelper> Composers = new Dictionary<IQueryableConnection,QueryComposerHelper>();
+        internal static Dictionary<IQueryableConnection, QueryComposerHelper> Composers = new Dictionary<IQueryableConnection, QueryComposerHelper>();
 
         public static void Init()
         {
@@ -69,7 +69,7 @@ namespace QueryDesk
         }
     }
 
-    public class CustomSegment: ISegment
+    public class CustomSegment : ISegment
     {
         private int os;
         private int le;
@@ -98,7 +98,7 @@ namespace QueryDesk
         }
     }
 
-    public class QueryComposerCompletionData: ICompletionData
+    public class QueryComposerCompletionData : ICompletionData
     {
         protected string stringval;
         protected string type;
@@ -137,7 +137,8 @@ namespace QueryDesk
 
         public System.Windows.Media.ImageSource Image
         {
-            get {
+            get
+            {
                 if (this.type == "field")
                 {
                     return QueryComposerResources.Field;
@@ -166,25 +167,25 @@ namespace QueryDesk
 
     public class QueryComposerHelper
     {
-        protected IQueryableConnection DBConnection = null;
-        protected Dictionary<string, Dictionary<string, string>> DBLayout = null;
-        public string Currentword = "";
+        protected IQueryableConnection connection = null;
+        protected Dictionary<string, Dictionary<string, string>> layout = null;
+        public string Currentword = string.Empty;
 
         public QueryComposerHelper(IQueryableConnection connection)
         {
-            DBConnection = connection;
+            this.connection = connection;
 
             InitializeLayout();
         }
 
         protected void InitializeLayout()
         {
-            DBLayout = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
+            layout = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
 
-            foreach (var tablename in DBConnection.ListTableNames())
+            foreach (var tablename in connection.ListTableNames())
             {
-                var fields = DBConnection.ListFieldNames(tablename);
-                DBLayout.Add(tablename, fields);
+                var fields = connection.ListFieldNames(tablename);
+                layout.Add(tablename, fields);
             }
         }
 
@@ -196,11 +197,12 @@ namespace QueryDesk
         /// <returns></returns>
         public static string ExtractPreviousWord(string s, int pos)
         {
-            string w = "";
+            string w = string.Empty;
             int p = pos;
             while (p >= 0)
             {
                 var c = s[p];
+
                 // word separators; space, dot, comma, tab, enter
                 if ((c == ' ') || (c == '.') || (c == ',') || (c == '<') || (c == '>') || (c == '=') || (c == '(') || (c == ')') || (c == 7) || (c == 10) || (c == 13))
                 {
@@ -218,6 +220,7 @@ namespace QueryDesk
                 {
                     w = c + w;
                 }
+
                 p--;
             }
 
@@ -226,11 +229,12 @@ namespace QueryDesk
 
         public static Tuple<string, int> ChainExtractPreviousWord(string s, int pos)
         {
-            string w = "";
+            string w = string.Empty;
             int p = pos;
             while (p >= 0)
             {
                 var c = s[p];
+
                 // word separators; space, dot, comma, tab, enter
                 if ((c == ' ') || (c == '.') || (c == ',') || (c == '<') || (c == '>') || (c == '=') || (c == '(') || (c == ')') || (c == 7) || (c == 10) || (c == 13))
                 {
@@ -248,6 +252,7 @@ namespace QueryDesk
                 {
                     w = c + w;
                 }
+
                 p--;
             }
 
@@ -256,15 +261,16 @@ namespace QueryDesk
 
         public static string ExtractNextWord(string s, int pos)
         {
-            string w = "";
+            string w = string.Empty;
             int p = pos;
             while (p < s.Length)
             {
                 var c = s[p];
+
                 // word separators; space, dot, comma, tab, enter
                 if ((c == ' ') || (c == '.') || (c == ',') || (c == '<') || (c == '>') || (c == '=') || (c == '(') || (c == ')') || (c == 7) || (c == 10) || (c == 13))
                 {
-                    if (w.Trim() != "")
+                    if (w.Trim() != string.Empty)
                     {
                         if (w.StartsWith("`") || w.StartsWith("["))
                         {
@@ -281,6 +287,7 @@ namespace QueryDesk
                 {
                     w = w + c;
                 }
+
                 p++;
             }
 
@@ -289,15 +296,16 @@ namespace QueryDesk
 
         public static Tuple<string, int> ChainExtractNextWord(string s, int pos)
         {
-            string w = "";
+            string w = string.Empty;
             int p = pos;
             while (p < s.Length)
             {
                 var c = s[p];
+
                 // word separators; space, dot, comma, tab, enter
                 if ((c == ' ') || (c == '.') || (c == ',') || (c == '<') || (c == '>') || (c == '=') || (c == '(') || (c == ')') || (c == 7) || (c == 10) || (c == 13))
                 {
-                    if (w.Trim() != "")
+                    if (w.Trim() != string.Empty)
                     {
                         if (w.StartsWith("`") || w.StartsWith("["))
                         {
@@ -307,44 +315,45 @@ namespace QueryDesk
                             }
                         }
 
-                        return new Tuple<string,int>(w, p);
+                        return new Tuple<string, int>(w, p);
                     }
                 }
                 else
                 {
                     w = w + c;
                 }
+
                 p++;
             }
 
-            return new Tuple<string,int>(w, s.Length);
+            return new Tuple<string, int>(w, s.Length);
         }
 
         protected bool IsExistingTable(string s)
         {
-            return DBLayout.Keys.Contains(s, StringComparer.OrdinalIgnoreCase);
+            return layout.Keys.Contains(s, StringComparer.OrdinalIgnoreCase);
         }
 
         public static string DetectSQLTableInQuery(string s)
         {
-            var iFrom   = s.IndexOf("from", StringComparison.OrdinalIgnoreCase);
-            var iInto   = s.IndexOf("into", StringComparison.OrdinalIgnoreCase);
-            var iUpdate = s.IndexOf("update", StringComparison.OrdinalIgnoreCase);
+            var from   = s.IndexOf("from", StringComparison.OrdinalIgnoreCase);
+            var into   = s.IndexOf("into", StringComparison.OrdinalIgnoreCase);
+            var update = s.IndexOf("update", StringComparison.OrdinalIgnoreCase);
 
-            if (iFrom != -1)
+            if (from != -1)
             {
-                return ExtractNextWord(s, iFrom + 4);
+                return ExtractNextWord(s, from + 4);
             }
-            else if (iInto != -1)
+            else if (into != -1)
             {
-                return ExtractNextWord(s, iInto + 4);
+                return ExtractNextWord(s, into + 4);
             }
-            else if (iUpdate != -1)
+            else if (update != -1)
             {
-                return ExtractNextWord(s, iUpdate + 6);
+                return ExtractNextWord(s, update + 6);
             }
 
-            return "";
+            return string.Empty;
         }
 
         public bool IsSQLKeyWord(string word)
@@ -375,11 +384,12 @@ namespace QueryDesk
             {
                 var word = p.Item1;
 
-                // possible occurences of alias
-                //  "from tablename as alias"
-                //  "from tablename alias"
-                //  "join tablename as alias on"
-                //  "join tablename alias on"
+                /* possible occurences of alias
+                  "from tablename as alias"
+                  "from tablename alias"
+                  "join tablename as alias on"
+                  "join tablename alias on"
+                */ 
 
                 if (word.Equals("from", StringComparison.OrdinalIgnoreCase) ||
                     word.Equals("into", StringComparison.OrdinalIgnoreCase) ||
@@ -415,11 +425,10 @@ namespace QueryDesk
                             }
                         }
                     }
-                    catch (ArgumentException e)
+                    catch (ArgumentException)
                     {
                         // gets thrown if key already exists in dictionary, we shouldve probably checked that before adding, but we can also just ignore the exception
                     }
-
                 }
 
                 p = ChainExtractNextWord(sql, p.Item2);
@@ -438,7 +447,7 @@ namespace QueryDesk
                 return tablename;
             }
 
-            return "";
+            return string.Empty;
         }
 
         /// <summary>
@@ -448,14 +457,13 @@ namespace QueryDesk
         /// <param name="data"></param>
         public void Initialize(TextCompositionEventArgs e, IList<ICompletionData> data)
         {
-            //e.Source
             var textarea = (TextArea)(((RoutedEventArgs)(e)).Source);
             var caret = textarea.Caret;
             var line = caret.Location.Line;
             var col = caret.Location.Column;
 
-            string word = "";
-            Currentword = "";
+            string word = string.Empty;
+            Currentword = string.Empty;
             bool showtables = false;
 
             // if the character on/before the current cursor position is a dot, extract the word that's in front of it (likely a tablename)
@@ -478,10 +486,10 @@ namespace QueryDesk
             }
 
             // loop over tables first to show fields of detected table
-            if (word != "")
+            if (word != string.Empty)
             {
                 Dictionary<string, string> fields;
-                if (DBLayout.TryGetValue(word, out fields))
+                if (layout.TryGetValue(word, out fields))
                 {
                     // word matches a tablename; list all fields in this table
                     foreach (var fieldname in fields)
@@ -494,12 +502,11 @@ namespace QueryDesk
             if (showtables)
             {
                 // loop over list again to show tablenames
-                foreach (var tablename in DBLayout.Keys)
+                foreach (var tablename in layout.Keys)
                 {
                     data.Add(new QueryComposerCompletionData("table", tablename, null));
                 }
             }
         }
-
     }
 }

@@ -20,22 +20,27 @@ using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 
 namespace QueryDesk
 {
-    class QDConnectionFailedException : Exception { };
-    class QDConnectionTypeNotSupportedException : Exception { };
+    public class QDConnectionFailedException : Exception
+    {
+    }
+
+    public class QDConnectionTypeNotSupportedException : Exception
+    {
+    }
 
     /// <summary>
     /// Interaction logic for UserControl1.xaml
     /// </summary>
     public partial class ConnectionTabControl : UserControl
     {
-        private IAppDBServersAndQueries AppDB;
+        private IAppDBServersAndQueries appDB;
         public IQueryableConnection DBConnection;
-        private int connection_id = 0;
+        private int connectionId = 0;
 
-        private AppDBServerType dbtype = AppDBServerType.Void;
-        private string dbconnectionstring = "";
+        private AppDBServerType type = AppDBServerType.Void;
+        private string connectionString = string.Empty;
 
-        private StoredQuery CurrentQuery = null;
+        private StoredQuery currentQuery = null;
 
         public ConnectionTabControl()
         {
@@ -44,11 +49,11 @@ namespace QueryDesk
             // Apply the SQL syntax highlighting definition
             edSQL.SyntaxHighlighting = HighlightingLoader.Load(XmlReader.Create(Assembly.GetExecutingAssembly().GetManifestResourceStream("QueryDesk.Resources.SQL.xshd")), HighlightingManager.Instance);
         }
-        
-        public void setDatabaseConnection(AppDBServerType type, string connstr)
+
+        public void SetDatabaseConnection(AppDBServerType type, string connectionString)
         {
-            dbconnectionstring = connstr;
-            dbtype = type;
+            this.connectionString = connectionString;
+            this.type = type;
 
             LoadConnectionSettings();
         }
@@ -56,14 +61,14 @@ namespace QueryDesk
         /// <summary>
         /// Initialize some Tab related things to align.
         /// </summary>
-        public void Initialize(IAppDBServersAndQueries AppDB, int server_id)
+        public void Initialize(IAppDBServersAndQueries appDB, int serverId)
         {
-            this.AppDB = AppDB;
-            this.connection_id = server_id;
+            this.appDB = appDB;
+            this.connectionId = serverId;
 
-            btnEditQuery.IsEnabled = (AppDB is IAppDBEditableQueries);
-            btnDelQuery.IsEnabled = (AppDB is IAppDBEditableQueries);
-            btnAddQuery.IsEnabled = (AppDB is IAppDBEditableQueries);
+            btnEditQuery.IsEnabled = (appDB is IAppDBEditableQueries);
+            btnDelQuery.IsEnabled = (appDB is IAppDBEditableQueries);
+            btnAddQuery.IsEnabled = (appDB is IAppDBEditableQueries);
 
             var what = Content as Grid;
             what.Margin = new Thickness(0, 0, 0, 0);
@@ -75,7 +80,7 @@ namespace QueryDesk
 
         private void Reload()
         {
-            cmbQueries.ItemsSource = AppDB.getQueriesListing(connection_id);
+            cmbQueries.ItemsSource = appDB.GetQueriesListing(connectionId);
             cmbQueries.DisplayMemberPath = "name";
             cmbQueries.SelectedValuePath = "id";
         }
@@ -83,7 +88,7 @@ namespace QueryDesk
         public void LoadConnectionSettings()
         {
             // todo: doesn't have to be MySQL, use some kind of factory that returns an interface to do queries with
-            DBConnection = ConnectionFactory.NewConnection((int)dbtype, dbconnectionstring);
+            DBConnection = ConnectionFactory.NewConnection((int)type, connectionString);
             if (DBConnection == null)
             {
                 throw new QDConnectionTypeNotSupportedException();
@@ -100,7 +105,7 @@ namespace QueryDesk
             string exampleqrystring = qry.ToString();
 
             // Loop through query parameters
-            foreach (var param in qry.parameters)
+            foreach (var param in qry.Parameters)
             {
                 // Replace defined parameter placeholder with given values
                 exampleqrystring = exampleqrystring.Replace("?" + param.Key, "'" + param.Value + "'");
@@ -142,13 +147,13 @@ namespace QueryDesk
             if (row != null)
             {
                 var link = new AppDBQueryLink(row);
-                CurrentQuery = null;
+                currentQuery = null;
                 edSQL.Text = link.sqltext;
             }
             else
             {
-                CurrentQuery = null;
-                edSQL.Text = "";
+                currentQuery = null;
+                edSQL.Text = string.Empty;
             }
         }
 
@@ -159,50 +164,50 @@ namespace QueryDesk
             if (row != null)
             {
                 var link = new AppDBQueryLink(row);
-                if (CurrentQuery == null)
+                if (currentQuery == null)
                 {
-                    CurrentQuery = new StoredQuery(link.sqltext);
+                    currentQuery = new StoredQuery(link.sqltext);
                 }
 
                 // Aks for query parameters and save them
-                if (!AskForParameters(CurrentQuery))
+                if (!AskForParameters(currentQuery))
                 {
                     // Return if parameter input was canceled
                     return;
                 }
 
-                CurrentQuery.RewriteParameters(DBConnection.GetParamPrefixChar());
+                currentQuery.RewriteParameters(DBConnection.GetParamPrefixChar());
 
                 // Processs query parameters
-                edSQL.Text = ProcessParameters(CurrentQuery);
+                edSQL.Text = ProcessParameters(currentQuery);
 
                 barQuery.Items.Clear();
 
                 var hyjackquery = false;
 
-                CExplainableQuery expl = QueryExplanationFactory.newExplain(DBConnection, CurrentQuery);
+                CExplainableQuery expl = QueryExplanationFactory.NewExplain(DBConnection, currentQuery);
                 if (expl != null)
                 {
-                    if (expl.hasErrors())
+                    if (expl.HasErrors())
                     {
-                        MessageBox.Show(expl.getErrorMsg(), "Query error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        MessageBox.Show(expl.GetErrorMsg(), "Query error", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
-                    else if (!expl.isAllIndexed())
+                    else if (!expl.IsAllIndexed())
                     {
                         if (MessageBox.Show("This query does not fully make use of indexes, are you sure you want to execute this query?", "Query warning", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                         {
                             hyjackquery = true;
                         }
                     }
-                    else if (expl.isUsingBadStuff())
+                    else if (expl.IsUsingBadStuff())
                     {
                         if (MessageBox.Show("This query could take a long time to run, are you sure you want to execute this query?", "Query warning", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                         {
                             hyjackquery = true;
                         }
                     }
-                    else if (expl.getMaxResults() >= 65535)
+                    else if (expl.GetMaxResults() >= 65535)
                     {
                         if (MessageBox.Show("This query could possibly return a lot of rows, are you sure you want to execute this query?", "Query warning", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
                         {
@@ -221,7 +226,7 @@ namespace QueryDesk
                 else
                 {
                     // execute query and get result set
-                    DBConnection.Query(CurrentQuery);
+                    DBConnection.Query(currentQuery);
                 }
 
                 DataTable dt;
@@ -269,8 +274,8 @@ namespace QueryDesk
                 bool? b = frm.ShowDialog();
                 if (b == true)
                 {
-                    var editable = (IAppDBEditableQueries)AppDB;
-                    editable.saveQuery(link);
+                    var editable = (IAppDBEditableQueries)appDB;
+                    editable.SaveQuery(link);
 
                     // we don't have to do Reload() here, the object (row) should be edited directly, but we still need to reset CurrentQuery (used by GoQuery button)
                     cmbQueries_SelectionChanged(cmbQueries, null);
@@ -280,15 +285,15 @@ namespace QueryDesk
 
         private void btnAddQuery_Click(object sender, RoutedEventArgs e)
         {
-            var link = new AppDBQueryLink(new AppDBDummyQuery(0, connection_id, "New Query", ""));
+            var link = new AppDBQueryLink(new AppDBDummyQuery(0, connectionId, "New Query", string.Empty));
             var frm = new frmQueryEdit();
             frm.Initialize(link, DBConnection);
 
             bool? b = frm.ShowDialog();
             if (b == true)
             {
-                var editable = (IAppDBEditableQueries)AppDB;
-                editable.saveQuery(link);
+                var editable = (IAppDBEditableQueries)appDB;
+                editable.SaveQuery(link);
 
                 Reload();
             }
@@ -307,8 +312,8 @@ namespace QueryDesk
                 {
                     // AppDB needs to be editable in order to have saveQuery and delQuery functions,
                     //  but this button will be disabled if it's not editable, so we can just blindly do a typecast it here
-                    var editable = (IAppDBEditableQueries)AppDB;
-                    editable.delQuery(link);
+                    var editable = (IAppDBEditableQueries)appDB;
+                    editable.DelQuery(link);
 
                     Reload();
                 }

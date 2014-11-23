@@ -9,47 +9,50 @@ namespace QueryDesk
 {
     public abstract class CExplainableQuery
     {
-        protected IQueryableConnection Connection;
-        protected StoredQuery Query;
-        protected StoredQuery ExplainQuery;
+        protected IQueryableConnection connection;
+        protected StoredQuery query;
+        protected StoredQuery explainQuery;
 
-        protected string Error = "";
+        protected string error = string.Empty;
 
         public CExplainableQuery(IQueryableConnection connection, StoredQuery query)
         {
-            Connection = connection;
-            Query = query;
+            this.connection = connection;
+            this.query = query;
 
-            initExplanation();
+            InitExplanation();
         }
 
-        protected abstract void initExplanation();
+        protected abstract void InitExplanation();
 
-        public abstract ulong getMaxResults();
-        public abstract bool isAllIndexed();
-        public abstract bool isUsingBadStuff();
+        public abstract ulong GetMaxResults();
+        
+        public abstract bool IsAllIndexed();
 
-        public bool hasErrors()
+        public abstract bool IsUsingBadStuff();
+
+        public bool HasErrors()
         {
-            return (Error != "");
+            return (error != string.Empty);
         }
 
-        public string getErrorMsg()
+        public string GetErrorMsg()
         {
-            return Error;
+            return error;
         }
 
         public StoredQuery _get()
         {
-            return ExplainQuery;
+            return explainQuery;
         }
     }
 
     public class QueryExplanationFactory
     {
-        public static CExplainableQuery newExplain(IQueryableConnection connection, StoredQuery query)
+        public static CExplainableQuery NewExplain(IQueryableConnection connection, StoredQuery query)
         {
-            if (query.SQL.StartsWith("select", StringComparison.OrdinalIgnoreCase)) {
+            if (query.SQL.StartsWith("select", StringComparison.OrdinalIgnoreCase))
+            {
                 if (connection is MySQLQueryableConnection)
                 {
                     return new MySQLQueryExplanation(connection, query);
@@ -64,82 +67,80 @@ namespace QueryDesk
         }
     }
 
-    class MySQLQueryExplanation: CExplainableQuery
+    public class MySQLQueryExplanation : CExplainableQuery
     {
-        protected DataTable Results;
+        protected DataTable results;
 
         public MySQLQueryExplanation(IQueryableConnection connection, StoredQuery query) : base(connection, query)
         {
         }
 
-        protected override void initExplanation()
+        protected override void InitExplanation()
         {
-            string sql = "EXPLAIN " + Query.SQL;
+            string sql = "EXPLAIN " + query.SQL;
 
-            ExplainQuery = new StoredQuery(sql);
-            ExplainQuery.CopyParamsFrom(Query);
+            explainQuery = new StoredQuery(sql);
+            explainQuery.CopyParamsFrom(query);
 
-            if (Connection.Query(ExplainQuery))
+            if (connection.Query(explainQuery))
             {
                 try
                 {
-                    Results = Connection.ResultsAsDataTable();
+                    results = connection.ResultsAsDataTable();
                 }
                 catch (Exception e)
                 {
-                    Error = e.Message;
-                    Results = null;
+                    error = e.Message;
+                    results = null;
                 }
                 
-                Connection.CloseQuery();
+                connection.CloseQuery();
             }
         }
 
         /* Explain example:
          
-           id	selecttype	table		type	possiblekeys	key			keylen	ref 				rows	extra
-            1	SIMPLE		charitem	ref		PRIMARY			PRIMARY		8		const				17		Using where
-            1	SIMPLE		item		eq_ref	PRIMARY			PRIMARY		8		lfs.charitem.itemid	1	
+           id   selecttype  table       type    possiblekeys    key         keylen  ref                 rows    extra
+            1   SIMPLE      charitem    ref     PRIMARY         PRIMARY     8       const               17      Using where
+            1   SIMPLE      item        eq_ref  PRIMARY         PRIMARY     8       lfs.charitem.itemid 1   
          
-            "id"	"select_type"	"table"	"type"	"possible_keys"	"key"	"key_len"	"ref"	"rows"	"Extra"
-            "1"	"SIMPLE"	"item"	"ALL"	"PRIMARY"	\N	\N	\N	"58910"	""
-            "1"	"SIMPLE"	"charitem"	"ref"	"Index_6"	"Index_6"	"4"	"lfs.item.id"	"4"	"Using where"
+            "id"    "select_type"   "table" "type"  "possible_keys" "key"   "key_len"   "ref"   "rows"  "Extra"
+            "1" "SIMPLE"    "item"  "ALL"   "PRIMARY"   \N  \N  \N  "58910" ""
+            "1" "SIMPLE"    "charitem"  "ref"   "Index_6"   "Index_6"   "4" "lfs.item.id"   "4" "Using where"
 
          */
 
-        public override ulong getMaxResults()
+        public override ulong GetMaxResults()
         {
             ulong i = 0;
-            if (Results != null)
+            if (results != null)
             {
-                i = Results.AsEnumerable().Max(row =>
-                        (row["rows"] == null) ? 0 : (ulong)row["rows"]
-                    );
+                i = results.AsEnumerable().Max(row =>
+                        (row["rows"] == null) ? 0 : (ulong)row["rows"]);
             }
 
             return i;
         }
 
-        public override bool isAllIndexed()
+        public override bool IsAllIndexed()
         {
             int i = 0;
-            if (Results != null)
+            if (results != null)
             {
-                Results.AsEnumerable().Sum(row =>
-                    (row["key"] is System.DBNull) ? 0 : 1
-                );
+                results.AsEnumerable().Sum(row =>
+                    (row["key"] is System.DBNull) ? 0 : 1);
 
-                return (i == Results.Rows.Count);
+                return (i == results.Rows.Count);
             }
 
             return true;
         }
 
-        public override bool isUsingBadStuff()
+        public override bool IsUsingBadStuff()
         {
-            if (Results != null)
+            if (results != null)
             {
-                foreach (var row in Results.AsEnumerable())
+                foreach (var row in results.AsEnumerable())
                 {
                     if (!(row["extra"] is System.DBNull))
                     {
@@ -160,29 +161,29 @@ namespace QueryDesk
         }
     }
 
-    class MSSQLQueryExplanation: CExplainableQuery
+    public class MSSQLQueryExplanation : CExplainableQuery
     {
         public MSSQLQueryExplanation(IQueryableConnection connection, StoredQuery query)
             : base(connection, query)
         {
         }
 
-        protected override void initExplanation()
+        protected override void InitExplanation()
         {
             throw new NotImplementedException();
         }
 
-        public override ulong getMaxResults()
+        public override ulong GetMaxResults()
         {
             throw new NotImplementedException();
         }
 
-        public override bool isAllIndexed()
+        public override bool IsAllIndexed()
         {
             throw new NotImplementedException();
         }
 
-        public override bool isUsingBadStuff()
+        public override bool IsUsingBadStuff()
         {
             throw new NotImplementedException();
         }

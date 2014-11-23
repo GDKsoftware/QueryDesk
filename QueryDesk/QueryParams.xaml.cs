@@ -23,8 +23,8 @@ namespace QueryDesk
     /// </summary>
     public partial class QueryParams : Window
     {
-        protected StoredQuery CurrentQuery;
-        protected Dictionary<string, TextBox> ParamBoxes = new Dictionary<string, TextBox>();
+        protected StoredQuery currentQuery;
+        protected Dictionary<string, TextBox> paramBoxes = new Dictionary<string, TextBox>();
 
         public QueryParams()
         {
@@ -36,7 +36,7 @@ namespace QueryDesk
 
         protected void InitDescriptions()
         {
-            edQueryDescription.Text = CurrentQuery.SQL;
+            edQueryDescription.Text = currentQuery.SQL;
         }
 
         protected void InitParams()
@@ -44,28 +44,30 @@ namespace QueryDesk
             bool focusSet = false;
             int currentRow = 0;
 
-            foreach (var param in CurrentQuery.parameters)
+            foreach (var param in currentQuery.Parameters)
             {
                 Label lbl = new Label();
-                lbl.Margin = new Thickness(0,-3,0,0);
+                lbl.Margin = new Thickness(0, -3, 0, 0);
                 lbl.Content = param.Key;
                 TextBox ed = new TextBox();
                 RowDefinition rowDef = new RowDefinition();
 
-                // note: can't bind, param.Value is read-only, need to set values by doing CurrentQuery.parameters["keyname"] = "new value";
-                //ed.DataContext = param;
-                //ed.SetBinding(TextBox.TextProperty, "Value");
+                /*
+                 note: can't bind, param.Value is read-only, need to set values by doing CurrentQuery.parameters["keyname"] = "new value";
+                 ed.DataContext = param;
+                 ed.SetBinding(TextBox.TextProperty, "Value");
+                */
 
                 if (param.Value == null)
                 {
-                    ed.Text = "";
+                    ed.Text = string.Empty;
                 }
                 else
                 {
                     ed.Text = (string)param.Value;
                 }
 
-                ParamBoxes.Add(param.Key, ed);
+                paramBoxes.Add(param.Key, ed);
 
                 // Set textbox height
                 ed.Height = 23;
@@ -101,7 +103,7 @@ namespace QueryDesk
 
         public void SetQuery(StoredQuery qry)
         {
-            CurrentQuery = qry;
+            currentQuery = qry;
 
             InitDescriptions();
             InitParams();
@@ -109,10 +111,10 @@ namespace QueryDesk
 
         public void SaveParamsToQuery()
         {
-            foreach (var key in ParamBoxes.Keys)
+            foreach (var key in paramBoxes.Keys)
             {
-                TextBox ed = ParamBoxes[key];
-                CurrentQuery.parameters[key] = ed.Text;
+                TextBox ed = paramBoxes[key];
+                currentQuery.Parameters[key] = ed.Text;
             }
         }
 

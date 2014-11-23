@@ -7,12 +7,15 @@ using System.Threading.Tasks;
 
 namespace QueryDesk
 {
-    class AppDBDummyQuery
+    public class AppDBDummyQuery
     {
-        public int id {get; set;}
-        public int connection_id {get; set;}
-        public string name {get; set;}
-        public string sqltext {get; set;}
+        public int id { get; set; }
+
+        public int connection_id { get; set; }
+
+        public string name { get; set; }
+
+        public string sqltext { get; set; }
 
         public AppDBDummyQuery(int id, int connection_id, string name, string sqltext)
         {
@@ -23,29 +26,37 @@ namespace QueryDesk
         }
     }
 
-    class AppDBDummyServer
+    public class AppDBDummyServer
     {
         public int id { get; set; }
+
         public string name { get; set; }
+
         public string host { get; set; }
+
         public int port { get; set; }
+
         public int type { get; set; }
+
         public string username { get; set; }
+
         public string password { get; set; }
+
         public string databasename { get; set; }
+
         public string extraparams { get; set; }
 
         public AppDBDummyServer()
         {
             this.id = 0;
             this.type = 0;
-            this.name = "";
-            this.host = "";
+            this.name = string.Empty;
+            this.host = string.Empty;
             this.port = 0;
-            this.username = "";
-            this.password = "";
-            this.databasename = "";
-            this.extraparams = "";
+            this.username = string.Empty;
+            this.password = string.Empty;
+            this.databasename = string.Empty;
+            this.extraparams = string.Empty;
         }
 
         public AppDBDummyServer(int id, string name, int type, string host, int port, string username, string password, string database, string extraparams = "")
@@ -61,12 +72,13 @@ namespace QueryDesk
             this.extraparams = extraparams;
         }
 
-        public override string ToString() {
+        public override string ToString()
+        {
             return name;
         }
     }
 
-    class AppDBDummy: IAppDBServersAndQueries
+    public class AppDBDummy : IAppDBServersAndQueries
     {
         private string connectionstring;
 
@@ -81,15 +93,15 @@ namespace QueryDesk
             lstServers.Add(new AppDBDummyServer(1, "Testserver 1", 1, "localhost", 3306, "root", "1234", "testdb"));
 
             lstQueries = new List<AppDBDummyQuery>();
-            lstQueries.Add(new AppDBDummyQuery(1,1,"Test Query 1", "select * from mytable where var1=:var1 and var2=:var2"));
+            lstQueries.Add(new AppDBDummyQuery(1, 1, "Test Query 1", "select * from mytable where var1=:var1 and var2=:var2"));
         }
 
-        public IEnumerable getServerListing()
+        public IEnumerable GetServerListing()
         {
             return lstServers;
         }
 
-        public IEnumerable getQueriesListing(long server_id)
+        public IEnumerable GetQueriesListing(long server_id)
         {
             var lst =
                 from q in lstQueries

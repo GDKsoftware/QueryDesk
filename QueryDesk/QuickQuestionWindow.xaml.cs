@@ -24,7 +24,8 @@ namespace QueryDesk
             get { return (string)lblQuestion.Content; }
             set { lblQuestion.Content = value; }
         }
-        public Func<string> Answer = () => "";
+
+        public Func<string> Answer = () => string.Empty;
 
         public QuickQuestionWindow()
         {
