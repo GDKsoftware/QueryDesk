@@ -226,7 +226,7 @@ namespace QueryDesk
             var editable = (IAppDBEditableServers)appDB;
 
             // Ask for confirmation before removing connection
-            confirmationResult = MessageBox.Show("Are you sure you want to remove \"" + currentSelectedServerLink.name + "\" ?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            confirmationResult = MessageBox.Show("Are you sure you want to remove \"" + currentSelectedServerLink.name + "\"?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (confirmationResult == MessageBoxResult.Yes)
             {
