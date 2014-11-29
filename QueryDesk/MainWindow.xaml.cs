@@ -183,7 +183,7 @@ namespace QueryDesk
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "Connecting", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
