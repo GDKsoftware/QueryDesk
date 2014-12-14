@@ -143,6 +143,8 @@ namespace QueryDesk
 
         private void cmbQueries_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            btnRefreshQuery.IsEnabled = false;
+
             var row = cmbQueries.SelectedItem;
             if (row != null)
             {
@@ -159,6 +161,8 @@ namespace QueryDesk
 
         private void btnGoQuery_Click(object sender, RoutedEventArgs e)
         {
+            btnRefreshQuery.IsEnabled = false;
+
             // parse query parameters
             var row = cmbQueries.SelectedItem;
             if (row != null)
@@ -234,6 +238,8 @@ namespace QueryDesk
                 {
                     // todo: datatable contains all results, no cursor/rowtravel/stream
                     dt = DBConnection.ResultsAsDataTable();
+
+                    btnRefreshQuery.IsEnabled = true;
                 }
                 catch (Exception x)
                 {
@@ -261,6 +267,43 @@ namespace QueryDesk
             }
         }
 
+        private void btnRefreshQuery_Click(object sender, RoutedEventArgs e)
+        {
+            barQuery.Items.Clear();
+
+            DBConnection.Query(currentQuery);
+
+            DataTable dt;
+            try
+            {
+                // todo: datatable contains all results, no cursor/rowtravel/stream
+                dt = DBConnection.ResultsAsDataTable();
+            }
+            catch (Exception x)
+            {
+                // todo: handle query errors in a better way
+                MessageBox.Show(x.Message);
+                return;
+            }
+
+            // display results in datagrid
+            gridQueryResults.AutoGenerateColumns = true;
+
+            if (dt != null)
+            {
+                gridQueryResults.ItemsSource = dt.DefaultView;
+
+                string s = "Results: " + dt.Rows.Count;
+                barQuery.Items.Add(s);
+            }
+            else
+            {
+                gridQueryResults.ItemsSource = null;
+                string s = "No results";
+                barQuery.Items.Add(s);
+            }
+        }
+
         private void btnEditQuery_Click(object sender, RoutedEventArgs e)
         {
             var row = cmbQueries.SelectedItem;
@@ -274,6 +317,8 @@ namespace QueryDesk
                 bool? b = frm.ShowDialog();
                 if (b == true)
                 {
+                    btnRefreshQuery.IsEnabled = false;
+
                     var editable = (IAppDBEditableQueries)appDB;
                     editable.SaveQuery(link);
 
@@ -292,6 +337,8 @@ namespace QueryDesk
             bool? b = frm.ShowDialog();
             if (b == true)
             {
+                btnRefreshQuery.IsEnabled = false;
+
                 var editable = (IAppDBEditableQueries)appDB;
                 editable.SaveQuery(link);
 
@@ -310,6 +357,8 @@ namespace QueryDesk
                 var r = MessageBox.Show("Are you sure you want to delete this query?", "Confirm", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (r == MessageBoxResult.Yes)
                 {
+                    btnRefreshQuery.IsEnabled = false;
+
                     // AppDB needs to be editable in order to have saveQuery and delQuery functions,
                     //  but this button will be disabled if it's not editable, so we can just blindly do a typecast it here
                     var editable = (IAppDBEditableQueries)appDB;
