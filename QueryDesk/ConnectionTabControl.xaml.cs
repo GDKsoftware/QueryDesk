@@ -17,6 +17,9 @@ using System.Xml;
 using System.Reflection;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
+using System.Text.RegularExpressions;
+using System.Net;
+using System.IO;
 
 namespace QueryDesk
 {
@@ -365,6 +368,78 @@ namespace QueryDesk
                     editable.DelQuery(link);
 
                     Reload();
+                }
+            }
+        }
+        
+        private void btnFeedToAction_Click(object sender, RoutedEventArgs e)
+        {
+            ActionsWindow frmActionsWindow = new ActionsWindow();
+            bool? b = frmActionsWindow.ShowDialog();
+            if (b == true)
+            {
+                // initialize status/progression indicator
+                while (barQuery.Items.Count < 2) {
+                    barQuery.Items.Add("");
+                }
+                barQuery.Items[1] = "Actions performed: 0";
+
+                // todo: make classes to handle these things elegantly
+
+                if (frmActionsWindow.SelectedActionType() == "Call URL")
+                {
+                    string urltemplate = frmActionsWindow.GetActionParams();
+
+                    // get parameters through regular expression (format url like "http://test.com/test.php?id={{id}}&name={{name}}" )
+                    var urlparams = Regex.Matches(urltemplate, "(?<={{).*?(?=}})");
+
+                    if (gridQueryResults.ItemsSource != null)
+                    {
+                        var recno = 0;
+
+                        // logfile
+                        var logfile = new StreamWriter("actionresults.txt");
+                        logfile.WriteLine("Starting actions.");
+
+                        DataView dt = (DataView)gridQueryResults.ItemsSource;
+                        foreach (DataRowView row in dt)
+                        {
+                            string urlrow = urltemplate;
+
+                            // replace all bracketted parameters in url with the fieldvalues in the current row 
+                            foreach (Match param in urlparams)
+                            {
+                                string p = param.Value;
+
+                                urlrow = urlrow.Replace("{{" + p + "}}", WebUtility.UrlEncode(row.Row[p].ToString()));
+                            }
+
+                            logfile.WriteLine("Calling URL: " + urlrow + "");
+
+                            var request = WebRequest.Create(urlrow);
+                            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+                            // log status (200 OK, 404 File not found, etc)
+                            logfile.WriteLine("Response Status: " + response.StatusDescription);
+
+                            // read data in response and log that in our logfile
+                            var dataStream = response.GetResponseStream();
+                            StreamReader reader = new StreamReader(dataStream);
+                            string responseFromServer = reader.ReadToEnd ();
+                            logfile.WriteLine(responseFromServer);
+
+                            response.Close();
+                            
+                            // continue
+
+                            recno++;
+                            barQuery.Items[1] = "Actions performed: " + recno;
+                        }
+
+                        logfile.WriteLine("Actions done.");
+
+                        logfile.Close();
+                    }
                 }
             }
         }

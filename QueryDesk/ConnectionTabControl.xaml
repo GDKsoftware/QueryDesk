@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:avalonedit="http://icsharpcode.net/sharpdevelop/avalonedit" x:Class="QueryDesk.ConnectionTabControl" 
              mc:Ignorable="d" Width="739" Height="400">
-    <Grid ScrollViewer.VerticalScrollBarVisibility="Disabled">
+    <Grid ScrollViewer.VerticalScrollBarVisibility="Disabled" Margin="0,0,-15,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="42"/>
             <RowDefinition Height="45"/>
@@ -22,8 +22,9 @@
         <Button x:Name="btnAddQuery" Content="+" HorizontalAlignment="Right" Margin="0,10,38,0" VerticalAlignment="Top" Width="23" Click="btnAddQuery_Click" ToolTip="Add new query" Height="22"/>
         <Button x:Name="btnDelQuery" Content="-" HorizontalAlignment="Right" Margin="0,10,10,0" VerticalAlignment="Top" Width="23" ToolTip="Remove query" Click="btnDelQuery_Click" Height="22"/>
         <avalonedit:TextEditor x:Name="edSQL" FontFamily="Consolas" FontSize="12" Margin="10,0" UseLayoutRounding="False" Text="..." WordWrap="True" IsReadOnly="True" Grid.Row="1"/>
-        <DataGrid x:Name="gridQueryResults" HorizontalAlignment="Stretch" Margin="10,9,10,0" CanUserResizeRows="False" IsReadOnly="True" Grid.Row="2" />
-        <StatusBar x:Name="barQuery" HorizontalAlignment="Stretch" Height="22" VerticalAlignment="Bottom" Background="{x:Null}" Grid.Row="3"/>
+        <DataGrid x:Name="gridQueryResults" HorizontalAlignment="Stretch" Margin="10,9,10,29" CanUserResizeRows="False" IsReadOnly="True" Grid.Row="2" />
         <GridSplitter HorizontalAlignment="Stretch" Height="9" ResizeDirection="Rows" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Top" Grid.Row="2" Margin="10,0"/>
+        <Button x:Name="btnFeedToAction" Content="Feed to action" Margin="0,0,10,5" Grid.Row="2" HorizontalAlignment="Right" Width="96" Height="20" VerticalAlignment="Bottom" Click="btnFeedToAction_Click"/>
+        <StatusBar x:Name="barQuery" HorizontalAlignment="Stretch" Height="22" VerticalAlignment="Bottom" Background="{x:Null}" Grid.Row="3"/>
     </Grid>
 </UserControl>

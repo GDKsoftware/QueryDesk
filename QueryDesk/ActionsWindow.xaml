@@ -1,0 +1,15 @@
+﻿<Window x:Name="FormActionsWindow" x:Class="QueryDesk.ActionsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Action details" Height="217" Width="482" WindowStartupLocation="CenterScreen" Activated="FormActionsWindow_Activated">
+    <Grid>
+        <Label Content="Action type:" HorizontalAlignment="Left" Margin="10,6,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="cbActionType" Margin="88,10,10,0" VerticalAlignment="Top">
+            <ComboBoxItem Content="Call URL" HorizontalAlignment="Left" Width="362"/>
+        </ComboBox>
+        <TextBox x:Name="edActionParameters" Margin="10,59,10,48" TextWrapping="Wrap" Text="http://mydomain.com/?id={{id}}"/>
+        <Button x:Name="ButtonCancel" Content="Cancel" Margin="0,0,90,10" HorizontalAlignment="Right" Width="75" Height="20" VerticalAlignment="Bottom" IsCancel="True" Click="ButtonCancel_Click"/>
+        <Button x:Name="ButtonGo" Content="Go" Margin="0,0,10,10" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" IsDefault="True" Click="ButtonGo_Click"/>
+
+    </Grid>
+</Window>

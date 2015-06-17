@@ -85,6 +85,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ActionsWindow.xaml.cs">
+      <DependentUpon>ActionsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="AppDBDummy.cs" />
     <Compile Include="AppDBIntf.cs" />
     <Compile Include="AppDBMySQL.cs" />
@@ -107,6 +110,10 @@
     <Compile Include="QueryEdit.xaml.cs">
       <DependentUpon>QueryEdit.xaml</DependentUpon>
     </Compile>
+    <Page Include="ActionsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="CloseableTabHeader.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
