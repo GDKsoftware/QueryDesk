@@ -242,7 +242,11 @@ namespace QueryDesk
                     // todo: datatable contains all results, no cursor/rowtravel/stream
                     dt = DBConnection.ResultsAsDataTable();
 
+                    // Enable Refresh query button
                     btnRefreshQuery.IsEnabled = true;
+
+                    // Enable Feed to action
+                    btnFeedToAction.IsEnabled = true;
                 }
                 catch (Exception x)
                 {

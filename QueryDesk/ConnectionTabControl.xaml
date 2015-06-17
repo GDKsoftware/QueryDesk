@@ -24,7 +24,7 @@
         <avalonedit:TextEditor x:Name="edSQL" FontFamily="Consolas" FontSize="12" Margin="10,0" UseLayoutRounding="False" Text="..." WordWrap="True" IsReadOnly="True" Grid.Row="1"/>
         <DataGrid x:Name="gridQueryResults" HorizontalAlignment="Stretch" Margin="10,9,10,29" CanUserResizeRows="False" IsReadOnly="True" Grid.Row="2" />
         <GridSplitter HorizontalAlignment="Stretch" Height="9" ResizeDirection="Rows" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Top" Grid.Row="2" Margin="10,0"/>
-        <Button x:Name="btnFeedToAction" Content="Feed to action" Margin="0,0,10,5" Grid.Row="2" HorizontalAlignment="Right" Width="96" Height="20" VerticalAlignment="Bottom" Click="btnFeedToAction_Click"/>
+        <Button x:Name="btnFeedToAction" Content="Feed to action" Margin="0,0,10,5" Grid.Row="2" HorizontalAlignment="Right" Width="96" Height="20" VerticalAlignment="Bottom" Click="btnFeedToAction_Click" IsEnabled="False"/>
         <StatusBar x:Name="barQuery" HorizontalAlignment="Stretch" Height="22" VerticalAlignment="Bottom" Background="{x:Null}" Grid.Row="3"/>
     </Grid>
 </UserControl>
