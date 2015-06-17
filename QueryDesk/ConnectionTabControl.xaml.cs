@@ -375,13 +375,16 @@ namespace QueryDesk
         private void btnFeedToAction_Click(object sender, RoutedEventArgs e)
         {
             ActionsWindow frmActionsWindow = new ActionsWindow();
-            bool? b = frmActionsWindow.ShowDialog();
-            if (b == true)
+
+            bool? DialogResult = frmActionsWindow.ShowDialog();
+
+            if (DialogResult == true)
             {
                 // initialize status/progression indicator
                 while (barQuery.Items.Count < 2) {
                     barQuery.Items.Add("");
                 }
+
                 barQuery.Items[1] = "Actions performed: 0";
 
                 // todo: make classes to handle these things elegantly
