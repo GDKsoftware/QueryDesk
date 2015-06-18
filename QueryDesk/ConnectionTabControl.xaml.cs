@@ -69,8 +69,6 @@ namespace QueryDesk
             this.appDB = appDB;
             this.connectionId = serverId;
 
-            btnEditQuery.IsEnabled = (appDB is IAppDBEditableQueries);
-            btnDelQuery.IsEnabled = (appDB is IAppDBEditableQueries);
             btnAddQuery.IsEnabled = (appDB is IAppDBEditableQueries);
 
             var what = Content as Grid;
@@ -154,12 +152,30 @@ namespace QueryDesk
                 var link = new AppDBQueryLink(row);
                 currentQuery = null;
                 edSQL.Text = link.sqltext;
+
+                // Disable query action buttons
+                enableQueryActionControls(true);
             }
             else
             {
                 currentQuery = null;
                 edSQL.Text = string.Empty;
+
+                // Disable query action buttons
+                enableQueryActionControls(false);
             }
+        }
+
+        /// <summary>
+        /// Enable or disable query action controls
+        /// </summary>
+        /// <param name="enable"></param>
+        private void enableQueryActionControls(Boolean enable)
+        {
+            // Enable/disable query action buttons
+            btnEditQuery.IsEnabled = enable;
+            btnDelQuery.IsEnabled = enable;
+            btnGoQuery.IsEnabled = enable;
         }
 
         private void btnGoQuery_Click(object sender, RoutedEventArgs e)
