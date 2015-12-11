@@ -8,7 +8,7 @@ Taskboard should be accessible using https://huboard.com/GDKsoftware/QueryDesk
 
 Uses icons from the MICROSOFT VISUAL STUDIO 2012 IMAGE LIBRARY (http://www.microsoft.com/en-us/download/details.aspx?id=35825)
 
-## HowToBuild
+## How to build
 
 To get the most out of the QueryDesk application, especially in work environments where you can share your queries among your coworkers, you will need to store your various database settings and queries in a local MySQL database.
 
