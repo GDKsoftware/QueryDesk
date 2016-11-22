@@ -7,24 +7,6 @@ using System.Runtime.CompilerServices;
 
 namespace QueryDesk
 {
-    public enum AppDBServerType
-    {
-        Void = 0, MySQL = 1, MSSQL = 2
-    }
-
-    public static class AppDBTypes
-    {
-        public static Dictionary<int, string> List()
-        {
-            var r = new Dictionary<int, string>();
-            r.Add((int)AppDBServerType.Void, string.Empty);
-            r.Add((int)AppDBServerType.MySQL, "MySQL");
-            r.Add((int)AppDBServerType.MSSQL, "MSSQL");
-
-            return r;
-        }
-    }
-
     /// <summary>
     /// Query class providing properties to bind from code and from WPF, reading and writing to similar properties of a non-prefined object, or a DataRowView
     /// </summary>
@@ -554,11 +536,21 @@ namespace QueryDesk
             //// todo: port
             //// todo: extraparams
 
-            return
-                "Server=" + host + ";" +
-                "Database=" + databasename + ";" +
-                "Uid=" + username + ";" +
-                "Pwd=" + password + ";";
+            if (type == 3)
+            {
+                return
+                    "Data Source=" + databasename + ";" +
+                    "Version=3;" +
+                    "Password=" + password + ";";
+            }
+            else
+            {
+                return
+                    "Server=" + host + ";" +
+                    "Database=" + databasename + ";" +
+                    "Uid=" + username + ";" +
+                    "Pwd=" + password + ";";
+            }
         }
     }
 
