@@ -13,13 +13,13 @@ namespace QueryDesk
 
     public static class AppDBTypes
     {
-        public static Dictionary<int, string> List()
+        public static Dictionary<long, string> List()
         {
-            var r = new Dictionary<int, string>();
-            r.Add((int)AppDBServerType.Void, string.Empty);
-            r.Add((int)AppDBServerType.MySQL, "MySQL");
-            r.Add((int)AppDBServerType.MSSQL, "MSSQL");
-            r.Add((int)AppDBServerType.SQLite, "SQLite");
+            var r = new Dictionary<long, string>();
+            r.Add((long)AppDBServerType.Void, string.Empty);
+            r.Add((long)AppDBServerType.MySQL, "MySQL");
+            r.Add((long)AppDBServerType.MSSQL, "MSSQL");
+            r.Add((long)AppDBServerType.SQLite, "SQLite");
 
             return r;
         }

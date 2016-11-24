@@ -14,7 +14,7 @@ namespace QueryDesk
 
         public string sqltext { get; set; }
 
-        public AppDBDummyQuery(int id, long connection_id, string name, string sqltext)
+        public AppDBDummyQuery(long id, long connection_id, string name, string sqltext)
         {
             this.id = id;
             this.connection_id = connection_id;
@@ -56,7 +56,7 @@ namespace QueryDesk
             this.extraparams = string.Empty;
         }
 
-        public AppDBDummyServer(int id, string name, int type, string host, int port, string username, string password, string database, string extraparams = "")
+        public AppDBDummyServer(long id, string name, long type, string host, long port, string username, string password, string database, string extraparams = "")
         {
             this.id = id;
             this.name = name;
