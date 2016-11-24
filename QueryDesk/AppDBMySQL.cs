@@ -109,7 +109,7 @@ namespace QueryDesk
             // get inserted id and assign to in server.id
             if (server.id <= 0)
             {
-                server.id = (int)qry.LastInsertedId;
+                server.id = qry.LastInsertedId;
             }
 
             return server.id;
@@ -159,7 +159,7 @@ namespace QueryDesk
 
             if (query.id <= 0)
             {
-                query.id = (int)qry.LastInsertedId;
+                query.id = qry.LastInsertedId;
             }
 
             return query.id;

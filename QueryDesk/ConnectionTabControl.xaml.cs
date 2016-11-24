@@ -27,7 +27,7 @@ namespace QueryDesk
     {
         private IAppDBServersAndQueries appDB;
         public IQueryableConnection DBConnection;
-        private int connectionId = 0;
+        private long connectionId = 0;
 
         private AppDBServerType type = AppDBServerType.Void;
         private string connectionString = string.Empty;
@@ -53,7 +53,7 @@ namespace QueryDesk
         /// <summary>
         /// Initialize some Tab related things to align.
         /// </summary>
-        public void Initialize(IAppDBServersAndQueries appDB, int serverId)
+        public void Initialize(IAppDBServersAndQueries appDB, long serverId)
         {
             this.appDB = appDB;
             this.connectionId = serverId;

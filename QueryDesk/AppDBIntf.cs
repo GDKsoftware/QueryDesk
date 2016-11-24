@@ -41,7 +41,7 @@ namespace QueryDesk
             }
         }
 
-        public int id
+        public long id
         {
             get
             {
@@ -49,11 +49,11 @@ namespace QueryDesk
                 if (data is DataRowView)
                 {
                     DataRowView row = (DataRowView)data;
-                    return (int)row["id"];
+                    return (long)row["id"];
                 }
                 else
                 {
-                    return (int)(data.GetType().GetProperty("id").GetValue(data, null));
+                    return (long)(data.GetType().GetProperty("id").GetValue(data, null));
                 }
             }
 
@@ -75,7 +75,7 @@ namespace QueryDesk
             }
         }
 
-        public int connection_id
+        public long connection_id
         {
             get
             {
@@ -83,11 +83,11 @@ namespace QueryDesk
                 if (data is DataRowView)
                 {
                     DataRowView row = (DataRowView)data;
-                    return (int)row["connection_id"];
+                    return (long)row["connection_id"];
                 }
                 else
                 {
-                    return (int)(data.GetType().GetProperty("connection_id").GetValue(data, null));
+                    return (long)(data.GetType().GetProperty("connection_id").GetValue(data, null));
                 }
             }
 
@@ -195,7 +195,7 @@ namespace QueryDesk
             }
         }
 
-        public int id
+        public long id
         {
             get
             {
@@ -203,11 +203,11 @@ namespace QueryDesk
                 if (data is DataRowView)
                 {
                     DataRowView row = (DataRowView)data;
-                    return (int)row["id"];
+                    return (long)row["id"];
                 }
                 else
                 {
-                    return (int)(data.GetType().GetProperty("id").GetValue(data, null));
+                    return (long)(data.GetType().GetProperty("id").GetValue(data, null));
                 }
             }
 
@@ -229,7 +229,7 @@ namespace QueryDesk
             }
         }
 
-        public int type
+        public long type
         {
             get
             {
@@ -237,11 +237,11 @@ namespace QueryDesk
                 if (data is DataRowView)
                 {
                     DataRowView row = (DataRowView)data;
-                    return (int)row["type"];
+                    return (long)row["type"];
                 }
                 else
                 {
-                    return (int)(data.GetType().GetProperty("type").GetValue(data, null));
+                    return (long)(data.GetType().GetProperty("type").GetValue(data, null));
                 }
             }
 
@@ -332,7 +332,7 @@ namespace QueryDesk
             }
         }
 
-        public int port
+        public long port
         {
             get
             {
@@ -341,11 +341,11 @@ namespace QueryDesk
                 if (data is DataRowView)
                 {
                     DataRowView row = (DataRowView)data;
-                    return (int)row["port"];
+                    return (long)row["port"];
                 }
                 else
                 {
-                    return (int)(data.GetType().GetProperty("port").GetValue(data, null));
+                    return (long)(data.GetType().GetProperty("port").GetValue(data, null));
                 }
             }
 

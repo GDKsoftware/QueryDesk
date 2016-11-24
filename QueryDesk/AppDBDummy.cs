@@ -6,15 +6,15 @@ namespace QueryDesk
 {
     public class AppDBDummyQuery
     {
-        public int id { get; set; }
+        public long id { get; set; }
 
-        public int connection_id { get; set; }
+        public long connection_id { get; set; }
 
         public string name { get; set; }
 
         public string sqltext { get; set; }
 
-        public AppDBDummyQuery(int id, int connection_id, string name, string sqltext)
+        public AppDBDummyQuery(int id, long connection_id, string name, string sqltext)
         {
             this.id = id;
             this.connection_id = connection_id;
@@ -25,15 +25,15 @@ namespace QueryDesk
 
     public class AppDBDummyServer
     {
-        public int id { get; set; }
+        public long id { get; set; }
 
         public string name { get; set; }
 
         public string host { get; set; }
 
-        public int port { get; set; }
+        public long port { get; set; }
 
-        public int type { get; set; }
+        public long type { get; set; }
 
         public string username { get; set; }
 
