@@ -49,7 +49,14 @@ namespace QueryDesk
                 if (data is DataRowView)
                 {
                     DataRowView row = (DataRowView)data;
-                    return (long)row["id"];
+                    if (row["id"] is int)
+                    {
+                        return (int)row["id"];
+                    }
+                    else
+                    {
+                        return (long)row["id"];
+                    }
                 }
                 else
                 {
@@ -83,7 +90,14 @@ namespace QueryDesk
                 if (data is DataRowView)
                 {
                     DataRowView row = (DataRowView)data;
-                    return (long)row["connection_id"];
+                    if (row["connection_id"] is int)
+                    {
+                        return (int)row["connection_id"];
+                    }
+                    else
+                    {
+                        return (long)row["connection_id"];
+                    }
                 }
                 else
                 {
@@ -203,7 +217,14 @@ namespace QueryDesk
                 if (data is DataRowView)
                 {
                     DataRowView row = (DataRowView)data;
-                    return (long)row["id"];
+                    if (row["id"] is int)
+                    {
+                        return (int)row["id"];
+                    }
+                    else
+                    {
+                        return (long)row["id"];
+                    }
                 }
                 else
                 {
@@ -237,7 +258,14 @@ namespace QueryDesk
                 if (data is DataRowView)
                 {
                     DataRowView row = (DataRowView)data;
-                    return (long)row["type"];
+                    if (row["type"] is int)
+                    {
+                        return (int)row["type"];
+                    }
+                    else
+                    {
+                        return (long)row["type"];
+                    }
                 }
                 else
                 {
@@ -341,7 +369,14 @@ namespace QueryDesk
                 if (data is DataRowView)
                 {
                     DataRowView row = (DataRowView)data;
-                    return (long)row["port"];
+                    if (row["port"] is int)
+                    {
+                        return (int)row["port"];
+                    }
+                    else
+                    {
+                        return (long)row["port"];
+                    }
                 }
                 else
                 {
