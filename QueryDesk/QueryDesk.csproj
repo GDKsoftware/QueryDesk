@@ -114,11 +114,14 @@
     <Compile Include="AppDBDummy.cs" />
     <Compile Include="AppDBIntf.cs" />
     <Compile Include="AppDBMySQL.cs" />
+    <Compile Include="AppDBSQLite.cs" />
     <Compile Include="AppDBTypes.cs" />
     <Compile Include="CloseableTabHeader.xaml.cs">
       <DependentUpon>CloseableTabHeader.xaml</DependentUpon>
     </Compile>
     <Compile Include="ConnectionFactory.cs" />
+    <Compile Include="MSSQLQueryableConnection.cs" />
+    <Compile Include="QueryableConnection.cs" />
     <Compile Include="QueryComposerHelper.cs" />
     <Compile Include="QueryExplain.cs" />
     <Compile Include="Queries.cs" />
@@ -134,6 +137,8 @@
     <Compile Include="QueryEdit.xaml.cs">
       <DependentUpon>QueryEdit.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MySQLQueryableConnection.cs" />
+    <Compile Include="SQLiteQueryableConnection.cs" />
     <Page Include="ActionsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

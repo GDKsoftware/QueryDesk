@@ -45,18 +45,33 @@ namespace QueryDesk
         public bool LoadConnectionSettings()
         {
             string connstr = (string)ConfigurationManager.AppSettings["connection"];
-
-            // connect to database through connection string set in the App.config
-            try
+            if (connstr != null)
             {
-                appDB = new AppDBMySQL(connstr);
+                // connect to database through connection string set in the App.config
+                try
+                {
+                    appDB = new AppDBMySQL(connstr);
 
-                // AppDB = new AppDBDummy(connstr);
+                    // AppDB = new AppDBDummy(connstr);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                    return false;
+                }
             }
-            catch (Exception e)
+            else
             {
-                MessageBox.Show(e.Message);
-                return false;
+                connstr = (string)ConfigurationManager.AppSettings["connectionsqlite"];
+                try
+                {
+                    appDB = new AppDBSQLite(connstr);
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show(e.Message);
+                    return false;
+                }
             }
 
             return true;
