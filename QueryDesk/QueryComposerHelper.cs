@@ -178,11 +178,23 @@ namespace QueryDesk
         protected void InitializeLayout()
         {
             layout = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
-
-            foreach (var tablename in connection.ListTableNames())
+            try
             {
-                var fields = connection.ListFieldNames(tablename);
-                layout.Add(tablename, fields);
+                foreach (var tablename in connection.ListTableNames())
+                {
+                    var fields = connection.ListFieldNames(tablename);
+                    layout.Add(tablename, fields);
+                }
+            }
+            catch (ArgumentException)
+            {
+                // this error is caused by tables with the same name but differently cased letters, so lets remake layout case sensitive
+                layout = new Dictionary<string, Dictionary<string, string>>(StringComparer.Ordinal);
+                foreach (var tablename in connection.ListTableNames())
+                {
+                    var fields = connection.ListFieldNames(tablename);
+                    layout.Add(tablename, fields);
+                }
             }
         }
 
