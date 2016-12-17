@@ -2,7 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         x:Class="QueryDesk.MainWindow"
-        Title="QueryDesk" Height="481" Width="602" Visibility="Visible" WindowStartupLocation="CenterScreen" MinWidth="602" MinHeight="367">
+        xmlns:tb="http://www.hardcodet.net/taskbar"
+        Title="QueryDesk" Height="481" Width="602" Visibility="Visible" WindowStartupLocation="CenterScreen" MinWidth="602" MinHeight="367" StateChanged="Window_StateChanged" Icon="Resources/DBSchema_12823.ico">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -43,5 +44,6 @@
                 </Grid>
             </TabItem>
         </TabControl>
+        <tb:TaskbarIcon x:Name="TrayIconQueryDesk" ToolTipText="QueryDesk" IconSource="Resources/DBSchema_12823.ico" TrayMouseDoubleClick="TrayIconQueryDesk_TrayMouseDoubleClick"></tb:TaskbarIcon>
     </Grid>
 </Window>

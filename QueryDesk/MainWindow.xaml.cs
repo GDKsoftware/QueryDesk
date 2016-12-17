@@ -253,5 +253,20 @@ namespace QueryDesk
             // Close form
             Close();
         }
+
+        private void TrayIconQueryDesk_TrayMouseDoubleClick(object sender, RoutedEventArgs e)
+        {
+            this.ShowInTaskbar = true;
+            WindowState = WindowState.Normal;
+            this.Topmost = true;
+        }
+        
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            if (this.WindowState == WindowState.Minimized)
+            {
+                this.ShowInTaskbar = false;
+            }
+        }
     }
 }
