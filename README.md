@@ -6,7 +6,7 @@ Currently you can connect to and query MySQL, MSSQL and SQLite databases.
 
 If you don't want to build QueryDesk yourself, you can download a setup (unsigned) from http://gdksoftware.nl/QueryDesk/setup.exe
 
-# Features
+## Features
 * SQL Syntax highlighting
 * Autocomplete tables and fields (using ctrl+space)
 * Parameterization of queries to be filled in when running the queries
